@@ -35,5 +35,23 @@ root.mainloop()
 
 
 #%% OPTION 2: run code yourself
-
+from dynamicpatch import main
 ## specify the parameters 
+main.run_dynamicpatch(
+        workpath = "D:/OneDrive - Clark University/Desktop/Research/patchmanuscript/inputs/lcm",
+        year = [
+        1971,
+        1985,
+        1999
+    ],
+        in_nodata = 0,
+        connectivity = 8,
+        targ_pre = 1,
+        study_area = None,
+        map_show = True,
+        chart_show = True,
+        unit = 'sqm2', # let program decide automatically
+        log_scale = True, 
+        export_map = True,
+        width = 0.35
+    )

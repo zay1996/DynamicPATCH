@@ -15,7 +15,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import json
 
 import matplotlib 
-matplotlib.use('Agg')
+#matplotlib.use('Agg')
 # Function to process the array and parameters
 def array_to_dict(array, years):
     if len(years) != array.shape[0]:
@@ -331,7 +331,7 @@ class MapApp(tk.Toplevel):
         self.initial_maps()
         
                 
-        #self.protocol("WM_DELETE_WINDOW", self.on_closing)
+        self.protocol("WM_DELETE_WINDOW", self.on_closing)
 
             
     def initial_maps(self):
@@ -489,31 +489,6 @@ class MapApp(tk.Toplevel):
 
         canvas.get_tk_widget().bind("<Button-3>", save_figure)
 
-    '''
-    def run_analysis_thread(self):
-
-
-        self.progress.start()  # Start the progress bar
-        analysis_thread = threading.Thread(target = self.run_analysis_ui)
-        analysis_thread.start()
-        if analysis_thread.is_alive():
-            self.update()  # This keeps the UI responsive
-            self.after(50)  # Pause for 50 milliseconds
-        else:
-            self.progress.stop()  # Stop the progress bar after the thread finishes
-            
-    def run_analysis_ui(self):
-        from processing import run_analysis
-        mapshow = self.show_transition_var.get()
-        chartsshow = self.show_charts_var.get()
-
-        if mapshow or chartsshow:
-            self.pattern, self.map_figs, self.map_title, self.chart_figs,\
-                self.chart_titles = run_analysis(mapshow=mapshow, chartsshow=chartsshow)
-            self.current_map_index = 0 
-            self.current_chart_index = 0
-            self.after(0, self.update_ui_after_analysis)
-    '''
     def start_analysis(self):
         self.progress.start()
         self.run_analysis_button.config(state='disabled')
@@ -561,16 +536,6 @@ class MapApp(tk.Toplevel):
             self.notebook.add(self.result_map_frame, text='Result - Maps')
     
     
-            '''
-            # Create a frame for the map and title
-            map_frame = ttk.Frame(self.result_map_frame)
-            map_frame.pack(side=tk.TOP, fill='both', expand=True)
-            
-            # Create a frame for the buttons
-            button_frame = ttk.Frame(self.result_map_frame)
-            button_frame.pack(side=tk.BOTTOM, pady=5, fill='x')
-            '''
-    
             # show map on the map frame
             
             self.show_map_buttons('result')
@@ -605,9 +570,9 @@ class MapApp(tk.Toplevel):
         #self.result_map_index = 0
         self.current_chart_index = 0    
     def on_closing(self):
-        self.destroy()
-        self.quit()  # Ensure the program exits completely
-
+        self.root.destroy()
+        self.root.quit()  # Ensure the program exits completely
+        os._exit(0)
 
 def main():
     input_app = InputApp()

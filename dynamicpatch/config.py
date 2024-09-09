@@ -109,7 +109,7 @@ def read_params_interface():
     return proc_params, data, data_val
     
 
-def read_params(workpath,year,targ_pre, connectivity = 8, in_nodata = 0):
+def read_params(_workpath,_year,_targ_pre = 1, _connectivity = 8, _in_nodata = 0, _study_area = None):
     '''
     Read parameters option 1: specifying dataset 
     
@@ -127,18 +127,39 @@ def read_params(workpath,year,targ_pre, connectivity = 8, in_nodata = 0):
         DESCRIPTION.
 
     '''
-    global params
-
-    workpath, datatype,targ_pre,in_nodata,year,connectivity,res = read_data.readparams(dataset,type_='compare')
-
+    global in_params, proc_params, data, data_val
+    global workpath, targ_pre, in_nodata, connectivity, year, filetype,res, nt
+    global study_area, dataset
+    
+    workpath,year,targ_pre,connectivity,in_nodata,study_area = \
+    _workpath,_year,_targ_pre,_connectivity,_in_nodata,_study_area
+        
+    filetype,dataset = read_data.check_filetype(workpath)
+    
+    if study_area is not None:
+        dataset = study_area
+        
 
     ### READ ALL TIF FILES UNDER WORKPATH 
-    if (datatype == 'Tif'):
-        data, data_val,size = read_data.readdatafunc(datatype, workpath)
+    if (filetype == 'Tif' or filetype == 'Folder'):
+        data, data_val,size = read_data.readdatafunc(filetype, workpath)
+        res = round(data.GetGeoTransform()[1])
     else:
-        data_val,size = read_data.readdatafunc(datatype,workpath)
-        
-    nl,ns = size[-2:]
+        data_val,size = read_data.readdatafunc(filetype,workpath)
+ 
+    in_params = {
+        'workpath': workpath,
+        'years': year,
+        'connectivity': connectivity,
+        'presence': targ_pre,
+        'nodata': in_nodata,
+        'FileType': filetype,
+        'dataset': dataset, 
+        'study_area':study_area
+    }        
+ 
+    
+    nl,ns = size[-2:]   
     nt = len(year)-1
         
     presence = 2
@@ -146,7 +167,7 @@ def read_params(workpath,year,targ_pre, connectivity = 8, in_nodata = 0):
     nodata = 0 
     
     
-    absence, presence, nodata, nt, nl, ns, connectivity = params
+    proc_params = absence, presence, nodata, nt, nl, ns, connectivity  
     
-    return params 
+    return proc_params, data, data_val 
 

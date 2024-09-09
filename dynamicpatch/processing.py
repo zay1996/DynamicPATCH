@@ -17,8 +17,6 @@ import matplotlib.pyplot as plt
 #import identify_dypatch
 from dynamicpatch import TransitionAnalysis,config,WriteData
 import glob
-from tkinter import ttk 
-progressbar = ttk.Progressbar()
 
 
 from dynamicpatch.config import in_params, proc_params, data_val, res
@@ -48,9 +46,11 @@ def initialize():
     return map_figs
 
 
-def run_analysis(mapshow = True, chartsshow = True,unit = 'km2', export_map = False, progress = None):           
+def run_analysis(mapshow = True, chartsshow = True,unit = 'km2', export_map = False, progress = None, width = 0.35, log_scale = True):           
     is_complete = False
-    progress.step(25)
+    if progress is not None:
+        print(progress)
+        progress.step(25)
     pattern = np.zeros((nt,nl,ns),dtype = 'int')
     
     pattern_maps = []
@@ -68,7 +68,8 @@ def run_analysis(mapshow = True, chartsshow = True,unit = 'km2', export_map = Fa
         analysis[i] = TransitionAnalysis.TransitionAnalysis(params, binary[0], binary[1], year)
         pattern[i] = analysis[i].identify()
         
-    progress.step(50)
+    if progress is not None:
+        progress.step(50)
         
             
     if mapshow is True:
@@ -79,9 +80,18 @@ def run_analysis(mapshow = True, chartsshow = True,unit = 'km2', export_map = Fa
             pattern_maps.append(pattern_map)
             
     if export_map is True:                     
-        FileName = workpath + 'maps\\' + dataset + 'trans_type.tif'
-        WriteData.writedata(FileName, pattern, data, 'byte',nl,ns)
+        # Prompt user for output directory
+        output_dir = input("Enter output map directory (please end with / or \\): ").strip()
         
+        # Ensure the directory ends with a backslash or forward slash
+        if not output_dir.endswith('\\') and not output_dir.endswith('/'):
+            output_dir += '\\'  # Use '\\' for Windows paths, '/' for Unix-like paths
+    
+        # Create the full path to the file
+        FileName = output_dir + dataset + '_trans_type.tif'
+        print(FileName,data,pattern)
+        # Call the function with the new FileName
+        WriteData.writedata(FileName, pattern, data, 'byte')
         
     if chartsshow is True: 
         from dynamicpatch import create_charts
@@ -89,16 +99,17 @@ def run_analysis(mapshow = True, chartsshow = True,unit = 'km2', export_map = Fa
         df_inde_all['year']=year[0:-1]
         for i in range(nt):
             df_inde_all.iloc[i,1:] = analysis[i].gross_change()
-        show_charts = create_charts.Gen_Charts(pattern)
-        fig1,title1 = show_charts.plot_ave_size()
-        fig2,title2 = show_charts.plot_num()
+        show_charts = create_charts.Gen_Charts(pattern,areaunit = unit)
+        fig1,title1 = show_charts.plot_ave_size(width = width, log_scale = log_scale)
+        fig2,title2 = show_charts.plot_num(width = width)
         
         fig3, title3 = show_charts.gainloss_stackedbars()
         fig4, title4 = show_charts.inde_stackedbars(df_inde_all)
         
         generated_charts.extend([fig1, fig2, fig3, fig4])
         chart_titles.extend([title1,title2,title3,title4])
-    progress.step(99)    
+    if progress is not None:
+        progress.step(99)    
     is_complete = True 
     result = pattern, pattern_maps, map_title, generated_charts, chart_titles
     return result

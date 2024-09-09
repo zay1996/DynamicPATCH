@@ -15,7 +15,7 @@ from dynamicpatch.config import cat_dict, df_cat, year, nt, res, connectivity
 
 
 class Gen_Charts:
-    def __init__(self, pattern, areaunit = 'pixels',type_ = 'change'):
+    def __init__(self, pattern, areaunit = 'default',type_ = 'change'):
         '''
         Initialize parameters needed for creating graphics 
 
@@ -55,10 +55,11 @@ class Gen_Charts:
         self.pattern = pattern
         # automatically assign appropriate areaunit 
         size_map = len(str(np.size(pattern)*res))
-        if(size_map > 6):
-            areaunit = 'km2'
-        if(size_map <= 6):
-            areaunit = 'sqm2'
+        if (areaunit == 'default'):
+            if(size_map > 6):
+                areaunit = 'km2'
+            if(size_map <= 6):
+                areaunit = 'sqm2'
         self.areaunit = areaunit
         self.type_ = type_
         
@@ -227,7 +228,7 @@ class Gen_Charts:
         fig.tight_layout()
         
         if flag_ax is False:
-            plt.show()   
+            #plt.show()   
             return fig, title
         else:
             return ax
@@ -287,7 +288,7 @@ class Gen_Charts:
         fig.tight_layout()
         if flag_ax is False:
         # Display the plot
-            plt.show()    
+            #plt.show()    
             return fig,title
         else:
             return ax
@@ -426,7 +427,7 @@ class Gen_Charts:
         
         fig.tight_layout()
         if ax_flag is False:
-            plt.show()
+            #plt.show()
             return fig, title
         else:
             return ax
@@ -598,7 +599,7 @@ class Gen_Charts:
         title = 'Annual Gross Loss and Gross Gain by Transition Types'
         
         if ax_flag is False:
-            plt.show()
+            #plt.show()
             return fig,title
         else:
             return ax        

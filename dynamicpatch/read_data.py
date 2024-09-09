@@ -115,3 +115,24 @@ def readdatafunc(FileType, FilePath):
 
 
 
+def check_filetype(file_path):
+    # Determine the file type based on the extension
+    if os.path.isdir(file_path):
+        file_type = "Folder"
+        dataset = os.path.basename(file_path)
+    else:
+        _, ext = os.path.splitext(file_path)
+        ext = ext.lower()
+        if ext == ".tif":
+            file_type = "Tif"
+        elif ext == ".xlsx":
+            file_type = "Excel"
+        elif ext == ".csv":
+            file_type = "Csv"
+        else:
+            print("Input Error", "The input file must be of type .tif, .xlsx, or .csv.")
+            file_type = None
+            
+        # Extract name of the dataset
+        dataset = os.path.basename(file_path).split('.')[0]
+    return file_type, dataset
