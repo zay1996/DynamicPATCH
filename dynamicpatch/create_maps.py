@@ -5,12 +5,13 @@ Create Maps associated with DynamicPATCH
 @author: Aiyin Zhang
 """
 
-
+import os
 import matplotlib.colors as colors
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from PIL import Image
 import numpy as np
+import dynamicpatch 
 from dynamicpatch.config import year, df_cat
 from matplotlib_scalebar.scalebar import ScaleBar
 import matplotlib.image as mpimg
@@ -65,7 +66,9 @@ def map_timepoint(tp,binary,absence,presence):
     # put those patched as legend-handles into the legend
     ax.legend(handles=patches,bbox_to_anchor=(1.01, 1), loc=2, borderaxespad=0. )
     # Add north arrow SVG
-    north_arrow = 'static/northarrow2.png'  # Update with the path to your SVG file
+    package_dir = os.path.dirname(os.path.abspath(dynamicpatch.__file__)) # find directory of the package
+    
+    north_arrow = package_dir+'/static/northarrow2.png'  # Update with the path to your SVG file
     img = Image.open(north_arrow)
     imagebox = OffsetImage(img, zoom=0.2)  # Adjust zoom as needed
     ab = AnnotationBbox(imagebox, (1.15, 0.1), frameon=False, xycoords='axes fraction', boxcoords="axes fraction", pad=0.0)
