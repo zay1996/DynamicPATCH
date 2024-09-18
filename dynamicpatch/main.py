@@ -6,12 +6,12 @@ reads parameters and input data and run the analysis by calling other functions
 @author: Aiyin Zhang
 """
 
-
+import importlib 
 from dynamicpatch import config 
 
 def run_dynamicpatch(
-        workpath = None,
-        year = None,
+        workpath,
+        year,
         in_nodata = 0,
         connectivity = 8,
         targ_pre = 1,
@@ -52,7 +52,7 @@ def run_dynamicpatch(
         Whether the result map will be exported as a tif file. Default is False.
     unit: String.
         Specifying the area unit for the result graphics. There are three options:
-        'pixels','sqm2', and 'km2'. Default is None and the program will decide the 
+        'pixels','sqm2', and 'km2'. Default is 'Default' and the program will decide the 
         optimal area unit based on the size of the input data.
     log_scale: Boolean
         Whether the size distribution graph will be displayed in log scale 
@@ -66,12 +66,12 @@ def run_dynamicpatch(
     
     proc_params, data, data_val = config.read_params\
         (workpath, year,targ_pre, connectivity,in_nodata, study_area)
-        
-    from dynamicpatch import processing     
+    from dynamicpatch import processing        
+    importlib.reload(processing)  
     processing.initialize()
-    processing.run_analysis(
+    result = processing.run_analysis(
         mapshow = map_show, chartsshow = chart_show, unit = unit, export_map = export_map, width = width, log_scale = log_scale)
 
-
-
+    
+    return result 
         

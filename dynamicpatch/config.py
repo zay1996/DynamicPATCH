@@ -146,6 +146,7 @@ def read_params(_workpath,_year,_targ_pre = 1, _connectivity = 8, _in_nodata = 0
         res = round(data.GetGeoTransform()[1])
     else:
         data_val,size = read_data.readdatafunc(filetype,workpath)
+        res = 0
  
     in_params = {
         'workpath': workpath,

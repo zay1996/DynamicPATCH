@@ -15,7 +15,7 @@ from dynamicpatch.config import cat_dict, df_cat, year, nt, res, connectivity
 
 
 class Gen_Charts:
-    def __init__(self, pattern, areaunit = 'default',type_ = 'change'):
+    def __init__(self, pattern, areaunit = None,type_ = 'change'):
         '''
         Initialize parameters needed for creating graphics 
 
@@ -55,12 +55,16 @@ class Gen_Charts:
         self.pattern = pattern
         # automatically assign appropriate areaunit 
         size_map = len(str(np.size(pattern)*res))
-        if (areaunit == 'default'):
+        self.areaunit = None
+        if areaunit is None:
+            if(res == 0):
+                self.areaunit = 'pixels'
             if(size_map > 6):
-                areaunit = 'km2'
-            if(size_map <= 6):
-                areaunit = 'sqm2'
-        self.areaunit = areaunit
+                self.areaunit = 'km2'
+            if(size_map <= 6 & size_map > 0):
+                self.areaunit = 'sqm2'     
+        #self.areaunit = areaunit
+        print(f"areaunit = {self.areaunit},size_map = {size_map},res = {res}")
         self.type_ = type_
         
         self.countnumsize()

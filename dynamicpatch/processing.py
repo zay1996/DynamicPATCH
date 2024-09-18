@@ -7,7 +7,6 @@ maps and graphics, the main function mainly calls this script to get the ouputs
 
 @author: Aiyin Zhang
 """
-
 from osgeo import gdal
 import numpy as np
 import os
@@ -17,7 +16,6 @@ import matplotlib.pyplot as plt
 #import identify_dypatch
 from dynamicpatch import TransitionAnalysis,config,WriteData
 import glob
-
 
 from dynamicpatch.config import in_params, proc_params, data_val, res
 workpath, year, connectivity, targ_pre, in_nodata, FileType, dataset,study_area = in_params['workpath'],\
@@ -41,22 +39,22 @@ def initialize():
         binary_t[data_val[i,:,:] != targ_pre] = absence
         binary_t[data_val[i,:,:] == in_nodata] = nodata         
         
-        map_fig = create_maps.map_timepoint(i,binary_t,absence,presence)
+        map_fig = create_maps.map_timepoint(i,binary_t,absence,presence,res = res)
         map_figs.append(map_fig)
-    return map_figs
+    return map_figs, binary_t
 
 
-def run_analysis(mapshow = True, chartsshow = True,unit = 'km2', export_map = False, progress = None, width = 0.35, log_scale = True):           
+def run_analysis(mapshow = True, chartsshow = True,unit = None, data = None, export_map = False, progress = None, width = 0.35, log_scale = True):           
     is_complete = False
-    if progress is not None:
-        print(progress)
-        progress.step(25)
+
     pattern = np.zeros((nt,nl,ns),dtype = 'int')
     
     pattern_maps = []
     generated_charts = []
     chart_titles = []
     analysis = {}
+    df_inde_all = []
+    map_title = ''
     for i in range(nt):
         
         binary = np.zeros((2,nl,ns),dtype = 'ubyte')
@@ -67,9 +65,6 @@ def run_analysis(mapshow = True, chartsshow = True,unit = 'km2', export_map = Fa
             
         analysis[i] = TransitionAnalysis.TransitionAnalysis(params, binary[0], binary[1], year)
         pattern[i] = analysis[i].identify()
-        
-    if progress is not None:
-        progress.step(50)
         
             
     if mapshow is True:
@@ -108,10 +103,10 @@ def run_analysis(mapshow = True, chartsshow = True,unit = 'km2', export_map = Fa
         
         generated_charts.extend([fig1, fig2, fig3, fig4])
         chart_titles.extend([title1,title2,title3,title4])
-    if progress is not None:
-        progress.step(99)    
+    
     is_complete = True 
-    result = pattern, pattern_maps, map_title, generated_charts, chart_titles
+    outputs = df_inde_all,data,data_val,binary
+    result = pattern, pattern_maps, map_title, generated_charts, chart_titles, outputs
     return result
 
 def write_image(pattern,FileName):

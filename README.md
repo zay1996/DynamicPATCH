@@ -23,7 +23,16 @@ pip install git+https://github.com/zay1996/DynamicPATCH.git
 
 # 2. Running the package 
 -----------------------
+DynamicPATCH provides two ways to run the analysis: the graphical user interface (GUI) option and the command-line option. For ease of use with no coding requirement, use the GUI option. For more flexibility and greater control of the outputs, use the command-line option. 
+
 ## 2.1 option one: using the built-in interface
+Open `test-interface.py` from the `tests` folder, run the entire script. Enter parameters at the pop-up window:
+
+![alt text](image.png)
+
+you can save your parameters into a .txt file by clicking on the `Save Parameters` button. Click on `Submit` to upload the parameters. A new window will pop-up:
+
+
 ## 2.2 option two: command line  
 
 

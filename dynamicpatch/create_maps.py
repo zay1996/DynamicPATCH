@@ -19,7 +19,7 @@ from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 
 
 
-def map_timepoint(tp,binary,absence,presence):
+def map_timepoint(tp,binary,absence,presence,res = None):
     '''
     Create initial maps of absence and presence at each time point
 
@@ -66,19 +66,20 @@ def map_timepoint(tp,binary,absence,presence):
     # put those patched as legend-handles into the legend
     ax.legend(handles=patches,bbox_to_anchor=(1.01, 1), loc=2, borderaxespad=0. )
     # Add north arrow SVG
-    package_dir = os.path.dirname(os.path.abspath(dynamicpatch.__file__)) # find directory of the package
-    
-    north_arrow = package_dir+'/static/northarrow2.png'  # Update with the path to your SVG file
-    img = Image.open(north_arrow)
-    imagebox = OffsetImage(img, zoom=0.2)  # Adjust zoom as needed
-    ab = AnnotationBbox(imagebox, (1.15, 0.1), frameon=False, xycoords='axes fraction', boxcoords="axes fraction", pad=0.0)
-    ax.add_artist(ab)
+    if res is not None and res != 0:
+        package_dir = os.path.dirname(os.path.abspath(dynamicpatch.__file__)) # find directory of the package    
+        north_arrow = package_dir+'/static/northarrow2.png'  # Update with the path to your SVG file
+        img = Image.open(north_arrow)
+        imagebox = OffsetImage(img, zoom=0.2)  # Adjust zoom as needed
+        ab = AnnotationBbox(imagebox, (1.15, 0.1), frameon=False, xycoords='axes fraction', boxcoords="axes fraction", pad=0.0)
+        ax.add_artist(ab)
     ax.set_title(str(year[tp]),fontsize = 20)   
+    #fig.tight_layout()
     
     return fig 
 
 
-def pattern_map(tp,pattern,data=None, res=None, ax = None,type_='change'):
+def pattern_map(tp,pattern,data=None, res=None, ax = None,frame = 'off', north_arrow = True, type_='change'):
     '''
     Create transition pattern maps 
 
@@ -95,6 +96,10 @@ def pattern_map(tp,pattern,data=None, res=None, ax = None,type_='change'):
         Resolution of the input in meters. The default is None.
     ax : axis, optional
         Figure axis, use when plot as a subfigure. The default is N
+    frame: string, optional
+        Whether a frame around the map is shown. The default is 'off'
+    north_arrow: boolean, optional
+        Whether a north arrow is plotted. The default is True 
     type_ : String, optional
         Specify whether the map if for change analysis or comparison analysis. 
         The default is 'change'.
@@ -134,7 +139,10 @@ def pattern_map(tp,pattern,data=None, res=None, ax = None,type_='change'):
     if ax is None:
         flag_ax = False
         fig, ax = plt.subplots(figsize=(15, 15))
+        #ax.axis('off')
+    if (frame == 'off'):
         ax.axis('off')
+
     
     if data is not None:
         im = ax.imshow(pattern[tp], interpolation='none', cmap=cmap, norm=norm,extent = extent)
@@ -159,16 +167,21 @@ def pattern_map(tp,pattern,data=None, res=None, ax = None,type_='change'):
     
     if (flag_ax == False):
         ax.legend(handles=patches, bbox_to_anchor=(1.01, 1), loc=2, borderaxespad=0.)
-        
-    scalebar = ScaleBar(res, location='lower right')  # 1 pixel = 2 meter
-    ax.add_artist(scalebar)
+    
+    if res is not None:
+        scalebar = ScaleBar(res, location='lower right')  # 1 pixel = 2 meter
+        ax.add_artist(scalebar)
 
     # Add north arrow SVG
-    north_arrow = 'static/northarrow2.png'  # Update with the path to your SVG file
-    img = Image.open(north_arrow)
-    imagebox = OffsetImage(img, zoom=0.2)  # Adjust zoom as needed
-    ab = AnnotationBbox(imagebox, (1.10, 0.1), frameon=False, xycoords='axes fraction', boxcoords="axes fraction", pad=0.0)
-    ax.add_artist(ab)
+    if north_arrow is True:
+        if res is not None and res != 0:
+            package_dir = os.path.dirname(os.path.abspath(dynamicpatch.__file__)) # find directory of the package    
+            north_arrow = package_dir+'/static/northarrow2.png'  # Update with the path to your SVG file
+            img = Image.open(north_arrow)
+            imagebox = OffsetImage(img, zoom=0.2)  # Adjust zoom as needed
+            ab = AnnotationBbox(imagebox, (1.10, 0.1), frameon=False, xycoords='axes fraction', boxcoords="axes fraction", pad=0.0)
+            ax.add_artist(ab)
+    #fig.tight_layout()
     
     if (flag_ax == False):
         if(type_ == 'compare'):

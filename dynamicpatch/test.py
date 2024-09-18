@@ -44,14 +44,14 @@ main.run_dynamicpatch(
         1985,
         1999
     ],
-        in_nodata = 0,
-        connectivity = 8,
-        targ_pre = 1,
-        study_area = None,
-        map_show = True,
-        chart_show = True,
-        unit = 'sqm2', # let program decide automatically
-        log_scale = True, 
-        export_map = True,
-        width = 0.35
+        in_nodata = 0, # optional, default = 0
+        connectivity = 8, # optional, default = 8
+        targ_pre = 1, # optional, default = 1
+        study_area = None, # optional, default = None
+        map_show = True, # optional, default = True
+        chart_show = True, # optional, default = True 
+        unit = None, # let program decide automatically
+        log_scale = True, # optional
+        export_map = True, # optional, default = True
+        width = 0.35 # optional, default = 0.35
     )

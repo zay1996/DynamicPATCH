@@ -144,8 +144,8 @@ class InputApp(tk.Tk):
                 
             # Extract name of the dataset
             self.dataset = os.path.basename(self.file_path).split('.')[0]
-            self.study_area_entry.delete(0, tk.END)
-            self.study_area_entry.insert(0, self.dataset)
+            #self.study_area_entry.delete(0, tk.END)
+            #self.study_area_entry.insert(0, self.dataset)
             
 
     def validate_integer(self, entry):
@@ -166,6 +166,7 @@ class InputApp(tk.Tk):
         workpath = self.workpath_entry.get()
         years = self.years_entry.get().split(',')
         self.years = years
+        study_area = self.study_area_entry.get()
         try:
             years = [int(year) for year in years]
         except ValueError:
@@ -188,7 +189,7 @@ class InputApp(tk.Tk):
             return        
 
         if not self.loaded_from_file:
-            workpath = self.workpath.get()
+            workpath = self.workpath_entry.get()
             
             # Check if the workpath is a directory (i.e., a folder)
             if os.path.isdir(workpath):
@@ -199,7 +200,7 @@ class InputApp(tk.Tk):
                 messagebox.showerror("Input Error", "Please select a valid file with .tif, .xlsx, or .csv extension.")
                 return
         
-        study_area = self.study_area_entry.get()
+        
         
         self.params = {
             'workpath': workpath,
@@ -268,13 +269,15 @@ class MapApp(tk.Toplevel):
     def __init__(self, master):
         super().__init__(master)
         self.master = master
+        self.analysis_thread = None  # Store thread object
+        self.analysis_running = False  # Flag to check if analysis is running
         self. setup_ui()
         
     def setup_ui(self):
         self.pattern = None
         self.data_ = None
         self.title("Map and Chart Viewer")
-        self.geometry("1200x600")
+        self.geometry("1200x800")
         self.years = config.year
         self.init_map_index = 0
         self.result_map_index = 0
@@ -293,7 +296,7 @@ class MapApp(tk.Toplevel):
 
         # Create Frames for each tab
         self.dynapatch_frame = ttk.Frame(self.notebook)
-        self.notebook.add(self.dynapatch_frame, text='DynaPATCH')
+        self.notebook.add(self.dynapatch_frame, text='DynamicPATCH')
 
         # Initialize map display
         self.init_canvas = None
@@ -304,7 +307,7 @@ class MapApp(tk.Toplevel):
 
         
         # Run Analysis button
-        self.run_analysis_button = ttk.Button(self.dynapatch_frame, text="Run Analysis", command=self.start_analysis)
+        self.run_analysis_button = ttk.Button(self.dynapatch_frame, text="Run Analysis", command=self.threading)
         self.run_analysis_button.pack(pady=20)
 
         # Progress bar
@@ -312,31 +315,40 @@ class MapApp(tk.Toplevel):
         self.progress.pack(pady=10)
 
         # Options for analysis
-        self.show_transition_var = tk.BooleanVar(value=True)
-        self.show_charts_var = tk.BooleanVar(value=True)
+        self.show_transition_var = tk.BooleanVar()
+        self.show_transition_var.set(False)
+        self.show_charts_var = tk.BooleanVar()
+        self.show_charts_var.set(False)
 
         self.option_frame = ttk.Frame(self.dynapatch_frame)
         self.option_frame.pack(pady=20)
 
         self.show_transition_check = ttk.Checkbutton(
-            self.option_frame, text="Show Transition Pattern Maps", variable=self.show_transition_var
+            self.option_frame, text="Show Transition Pattern Maps", variable=self.show_transition_var,\
+                command = lambda:self.toggle(self.show_transition_var)
         )
+        self.show_transition_check.var = self.show_transition_var
         self.show_transition_check.grid(row=0, column=0)
-
+        #self.show_transition_check.pack()
         self.show_charts_check = ttk.Checkbutton(
-            self.option_frame, text="Show Charts", variable=self.show_charts_var
-        )
+            self.option_frame, text="Show Charts", variable=self.show_charts_var,\
+                command = lambda:self.toggle(self.show_charts_var))
+        
+        self.show_charts_check.var = self.show_charts_var
         self.show_charts_check.grid(row=0, column=1)
+        #self.show_charts_check.pack()
         self.show_map_buttons('init')
         self.initial_maps()
         
                 
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
-
+    
+    def toggle(self,var):
+        var.set(not var.get())
             
     def initial_maps(self):
         from dynamicpatch.processing import initialize
-        self.init_map_figs = initialize()
+        self.init_map_figs, _ = initialize()
         #self.show_map()
 
         self.show_map('init')
@@ -490,47 +502,67 @@ class MapApp(tk.Toplevel):
         canvas.get_tk_widget().bind("<Button-3>", save_figure)
 
     def start_analysis(self):
-        self.progress.start()
-        self.run_analysis_button.config(state='disabled')
-        self.update()
-        #self.initial_map_figs = self.init_map_figs.copy()
-        self.after(100, self.run_analysis_step)
+       if not self.analysis_running:
+            self.analysis_running = True
+            # Schedule the UI changes to the main thread
+            self.after(0, self.progress.start)
+            self.after(0, lambda: self.run_analysis_button.config(state='disabled'))
+            # Call the function to run analysis
+            #self.update()  
+            self.run_analysis_step()
+    
+ 
         
     def run_analysis_step(self):
         from dynamicpatch.processing import run_analysis
-        try:
-            mapshow = self.show_transition_var.get()
-            chartsshow = self.show_charts_var.get()
-            print(mapshow,chartsshow)
-            if not mapshow and not chartsshow:
-                messagebox.showerror("Error", "Please select at least one option (Show Transition Pattern Maps or Show Charts)")
-                self.progress.stop()
-                self.run_analysis_button.config(state='normal')
-                return           
+        try:          
+            if not self.mapshow and not self.chartsshow:
+                # Schedule messagebox and button updates to the main thread
+                self.after(0, lambda: messagebox.showerror("Error", "Please select at least one option (Show Transition Pattern Maps or Show Charts)"))
+                self.after(0, self.progress.stop)  # Stop progress bar in the main thread
+                self.after(0, lambda: self.run_analysis_button.config(state='normal'))
+                self.analysis_running = False
+                return      
         
             # Run a small part of the analysis
             #is_complete, partial_result = run_analysis(progress = self.progress, mapshow=mapshow, chartsshow=chartsshow)
             #if is_complete:
-            self.pattern, self.result_map_figs, self.map_title, self.chart_figs, self.chart_titles = run_analysis(progress = self.progress, mapshow=mapshow, chartsshow=chartsshow)
+            self.pattern, self.result_map_figs, self.map_title, self.chart_figs, self.chart_titles, _ \
+                = run_analysis(progress = self.progress, mapshow=self.mapshow, chartsshow=self.chartsshow)
                 #self.current_chart_index = 0
             self.after(100, self.update_ui_after_analysis)
             #else:
             #    self.after(100, self.run_analysis_step)
         
         except Exception as e:
-            messagebox.showerror("Error", f"An error occurred: {str(e)}")
-            self.progress.stop()
-            self.run_analysis_button.config(state='normal')     
-
+            # Handle errors in the main thread
+            self.after(0, lambda: messagebox.showerror("Error", f"An error occurred: {str(e)}"))
+            self.after(0, self.progress.stop)
+            self.after(0, lambda: self.run_analysis_button.config(state='normal'))
+            self.analysis_running = False
+                
+    def threading(self):
+        self.update()
+        self.mapshow = self.show_transition_var.get()
+        self.chartsshow = self.show_charts_var.get()
+        
+        print(self.mapshow,self.chartsshow)
+    
+        # Start the analysis in a background thread
+        if not self.analysis_thread or not self.analysis_thread.is_alive():
+            self.analysis_thread = threading.Thread(target=self.start_analysis, daemon=True)
+            self.analysis_thread.start()
+    
     def update_ui_after_analysis(self):
         self.progress.stop()
         self.run_analysis_button.config(state='normal')
+        self.analysis_running = False  # Mark analysis as finished
         messagebox.showinfo("Analysis Complete", "Analysis finished.")
 
-        mapshow = self.show_transition_var.get()
-        chartsshow = self.show_charts_var.get()
+        #mapshow = self.show_transition_var.get()
+        #chartsshow = self.show_charts_var.get()
         
-        if mapshow:
+        if self.mapshow:
             # Create Result - Maps tab 
             self.result_map_frame = ttk.Frame(self.notebook)
             self.notebook.add(self.result_map_frame, text='Result - Maps')
@@ -552,7 +584,7 @@ class MapApp(tk.Toplevel):
             self.show_map('result')
         
         
-        if chartsshow:
+        if self.chartsshow:
             # Create the chart tab and display charts
             self.result_chart_frame = ttk.Frame(self.notebook)
             self.notebook.add(self.result_chart_frame, text='Result - Charts')
@@ -561,19 +593,25 @@ class MapApp(tk.Toplevel):
             self.show_chart_buttons(self.result_chart_frame)
             self.show_chart(self.result_chart_frame)
         
-        if mapshow:
+        if self.mapshow:
             # Automatically switch to the Result - Maps tab
             self.notebook.select(self.result_map_frame)
-        elif chartsshow:
+        elif self.chartsshow:
             self.notebook.select(self.result_chartsframe)
         # Reset current indices
         #self.result_map_index = 0
         self.current_chart_index = 0    
     def on_closing(self):
-        self.root.destroy()
-        self.root.quit()  # Ensure the program exits completely
-        os._exit(0)
-
+        # Check if the analysis is still running
+        if self.analysis_running:
+            if messagebox.askyesno("Quit", "Analysis is still running. Do you want to quit?"):
+                self.analysis_running = False  # Stop the flag
+                if self.analysis_thread and self.analysis_thread.is_alive():
+                    self.analysis_thread.join(timeout=2)  # Wait for the thread to finish
+                self.destroy()  # Close the window
+        else:
+            self.destroy()
+            
 def main():
     input_app = InputApp()
     input_app.mainloop()
