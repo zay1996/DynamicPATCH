@@ -316,9 +316,9 @@ class MapApp(tk.Toplevel):
 
         # Options for analysis
         self.show_transition_var = tk.BooleanVar()
-        self.show_transition_var.set(False)
+        self.show_transition_var.set(True)
         self.show_charts_var = tk.BooleanVar()
-        self.show_charts_var.set(False)
+        self.show_charts_var.set(True)
 
         self.option_frame = ttk.Frame(self.dynapatch_frame)
         self.option_frame.pack(pady=20)
