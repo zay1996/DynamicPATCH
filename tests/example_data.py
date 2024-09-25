@@ -96,8 +96,53 @@ def preabs_exp(binary,status,ax = None):
     if ax is not None:
         return im
 
+#%%
+#### MAP OF OVERLAY ####
+
+datacrosst = np.zeros((nl,ns),dtype = int)
+         
+datacrosst[(binary[0] == 1) & (binary[1] == 1)] = 0
+datacrosst[(binary[0] == 2) & (binary[1] == 2)] = 1
+datacrosst[(binary[0] == 1) & (binary[1] == 2)] = 2
+datacrosst[(binary[0] == 2) & (binary[1] == 1)] = 3
 
 
+def overlaymap(map_):
+    binarylist = ['Stable Absence','Stable Presence','Gain','Loss']
+    colorlist = ['#bdbdbd','#525252','Blue','sienna']
+    cmap = colors.ListedColormap(colorlist)
+    boundaries = [-.5,.5,1.5,2.5,3.5]
+    norm = colors.BoundaryNorm(boundaries, ncolors=len(colorlist), clip=True)
+    
+    fig, ax = plt.subplots(figsize=(15,15))
+    
+    
+    im = ax.imshow(map_, interpolation='none',cmap=cmap,norm=norm)
+    
+    
+    # Add white gridlines
+    # Add gridlines manually
+    for edge in np.arange(-0.5, map_.shape[1], 1):
+        ax.axvline(x=edge, color='white', linewidth=2)
+    
+    for edge in np.arange(-0.5, map_.shape[0], 1):
+        ax.axhline(y=edge, color='white', linewidth=2)
+    # Remove the major ticks
+    ax.tick_params(which='both', bottom=False, left=False, labelbottom=False, labelleft=False)
+    '''
+    # Add pixel value labels
+    for i in range(map_.shape[0]):
+        for j in range(map_.shape[1]):
+            ax.text(j, i, map_[i, j], ha='center', va='center', color='grey',fontsize = 14)
+    '''
+    # Remove axis ticks and labels
+    #ax.axis('off')
+    
+    patches = [mpatches.Patch(color=colorlist[i], label=binarylist[i]) for i in np.arange(len(binarylist))]
+    # put those patched as legend-handles into the legend
+    ax.legend(handles=patches,loc='lower center', bbox_to_anchor=(0.5, -0.10), ncol = 4, borderaxespad=0. )
+
+overlaymap(datacrosst)
 #%%
 ####### MAP OF TRANSITION PATTERNS #######
 from dynamicpatch.config import df_cat

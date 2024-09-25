@@ -18,7 +18,7 @@ import glob
 from dynamicpatch import main
 ## specify the parameters 
 result_pond = main.run_dynamicpatch(
-        workpath = "D:/OneDrive - Clark University/Desktop/Research/patchmanuscript/inputs/pondbinary.tif",
+        workpath = os.path.dirname(os.path.dirname(os.getcwd())) + '/inputs/pondbinary.tif',
         year = [
         1938,
         1971,
@@ -30,14 +30,14 @@ result_pond = main.run_dynamicpatch(
         study_area = None,
         map_show = True,
         chart_show = True,
-        #unit = 'sqm2', # let program decide automatically
-        log_scale = True, 
+        unit = 'sqm2', # let program decide automatically
+        log_scale = False, 
         export_map = False,
         width = 0.35
     )
 
 pondpattern, _, _, _, _, pond_outputs = result_pond 
-df_inde_all_pond,data_pond,dataval_pond= pond_outputs
+df_inde_all_pond,data_pond,dataval_pond, binary_pond = pond_outputs
 
 #%% marsh
 ## specify the parameters 
@@ -55,14 +55,14 @@ result_marsh = main.run_dynamicpatch(
         study_area = None,
         map_show = True,
         chart_show = True,
-        #unit = 'sqm2', # let program decide automatically
+        unit = 'sqm2', # let program decide automatically
         log_scale = True, 
         export_map = False,
         width = 0.35
     )
 
 marshpattern, _, _, _, _, marsh_outputs = result_marsh 
-df_inde_all_marsh,data_marsh,dataval_marsh= marsh_outputs
+df_inde_all_marsh,data_marsh,dataval_marsh, binary_marsh = marsh_outputs
     
 #%% Create study area map 
 filepath = 'D:\\OneDrive - Clark University\\Desktop\\Research\\patchmanuscript\\graphs\\'
@@ -332,7 +332,7 @@ patches = [mpatches.Patch(color=colorlist[i], label=categorylist[i]) for i in ra
 fig.legend(handles=patches, loc='lower center', bbox_to_anchor=(0.5, 0.001), ncol = 6,fontsize=16)
 plt.subplots_adjust(bottom=0.05)
 #plt.tight_layout()
-#plt.savefig(filepath + 'pondmarsh'+'map.tif',  bbox_inches='tight',format='tif') 
+plt.savefig(filepath + 'pondmarsh'+'mapNEW.tif', dpi = 600, bbox_inches='tight',format='tif') 
 plt.show()
 
 

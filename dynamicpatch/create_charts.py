@@ -55,7 +55,7 @@ class Gen_Charts:
         self.pattern = pattern
         # automatically assign appropriate areaunit 
         size_map = len(str(np.size(pattern)*res))
-        self.areaunit = None
+        self.areaunit = areaunit
         if areaunit is None:
             if(res == 0):
                 self.areaunit = 'pixels'
@@ -63,7 +63,6 @@ class Gen_Charts:
                 self.areaunit = 'km2'
             if(size_map <= 6 & size_map > 0):
                 self.areaunit = 'sqm2'     
-        #self.areaunit = areaunit
         print(f"areaunit = {self.areaunit},size_map = {size_map},res = {res}")
         self.type_ = type_
         

@@ -6,8 +6,6 @@ This script contains all the important parameters used in DynamicPATCH
 @author: Aiyin Zhang
 """
 
-import tkinter as tk
-from tkinter import Tk
 import pandas as pd 
 from dynamicpatch import read_data 
 
@@ -52,62 +50,6 @@ study_area = ""
 dataset = ""
 params = None
 
-def read_params_interface():
-    '''
-    Read parameters by pop up window 
-
-    Returns
-    -------
-    None.
-
-    '''
-    global in_params, proc_params, data, data_val
-    global workpath, targ_pre, in_nodata, connectivity, year, filetype,res, nt
-    global study_area, dataset
-
-    from dynamicpatch.interface import InputApp, process_inputs
-    
-    
-    # Create the Tkinter application
-    root = Tk()  # Create a root Tk instance to manage the Tkinter window
-    root.withdraw()  # Hide the root window (we only want the App window to show)
-
-    app = InputApp()
-    app.mainloop()  # This call will block until the window is closed
-    in_params = app.get_params()
-    if in_params:
-        process_inputs(**in_params)
-    
-    
-    workpath = in_params['workpath']
-    targ_pre = int(in_params['presence'])
-    in_nodata = int(in_params['nodata'])
-    connectivity = int(in_params['connectivity'])
-    year = in_params['years']
-    filetype = in_params['FileType']
-    dataset = in_params['dataset']
-    study_area = in_params['study_area']
-    
-    ### READ ALL TIF FILES UNDER WORKPATH 
-    if (filetype == 'Tif' or filetype == 'Folder'):
-        data, data_val,size = read_data.readdatafunc(filetype, workpath)
-        res = round(data.GetGeoTransform()[1])
-    else:
-        data_val,size = read_data.readdatafunc(filetype,workpath)
-        
-    nl,ns = size[-2:]   
-    nt = len(year)-1
-        
-    presence = 2
-    absence = 1
-    nodata = 0 
-    
-    
-    proc_params = absence, presence, nodata, nt, nl, ns, connectivity  
-
-    
-    return proc_params, data, data_val
-    
 
 def read_params(_workpath,_year,_targ_pre = 1, _connectivity = 8, _in_nodata = 0, _study_area = None):
     '''

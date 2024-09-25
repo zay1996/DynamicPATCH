@@ -12,6 +12,9 @@ import matplotlib.patches as mpatches
 from PIL import Image
 import numpy as np
 import dynamicpatch 
+#from dynamicpatch import processing        
+#import importlib 
+#importlib.reload(processing)  
 from dynamicpatch.config import year, df_cat
 from matplotlib_scalebar.scalebar import ScaleBar
 import matplotlib.image as mpimg
@@ -178,7 +181,7 @@ def pattern_map(tp,pattern,data=None, res=None, ax = None,frame = 'off', north_a
             package_dir = os.path.dirname(os.path.abspath(dynamicpatch.__file__)) # find directory of the package    
             north_arrow = package_dir+'/static/northarrow2.png'  # Update with the path to your SVG file
             img = Image.open(north_arrow)
-            imagebox = OffsetImage(img, zoom=0.2)  # Adjust zoom as needed
+            imagebox = OffsetImage(img, zoom=0.3)  # Adjust zoom as needed
             ab = AnnotationBbox(imagebox, (1.10, 0.1), frameon=False, xycoords='axes fraction', boxcoords="axes fraction", pad=0.0)
             ax.add_artist(ab)
     #fig.tight_layout()
