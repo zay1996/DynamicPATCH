@@ -1,0 +1,13 @@
+{
+    "workpath": "D:/OneDrive - Clark University/Desktop/Research/patchmanuscript/inputs/examplev4.xlsx",
+    "years": [
+        0,
+        1
+    ],
+    "connectivity": 8,
+    "presence": 1,
+    "nodata": -1,
+    "FileType": "Excel",
+    "dataset": "example",
+    "study_area": "Example Data"
+}
