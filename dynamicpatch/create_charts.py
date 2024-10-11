@@ -143,6 +143,8 @@ class Gen_Charts:
             self.patch_ave_q1.iloc[i,1:] = q1_patch
             self.patch_ave_q3.iloc[i,1:] = q3_patch
             self.patch_median.iloc[i,1:] = med_patch
+            
+        return self.df_patch_num,self.df_patch_size, self.patch_ave, self.patch_median
        
 
 
@@ -171,6 +173,8 @@ class Gen_Charts:
         if ax is None:
             fig, ax = plt.subplots(figsize=(10,6))
             flag_ax = False
+        elif ax is not None:
+            flag_ax = True
     
         df_types = self.patch_median.iloc[:, 2:]
         
@@ -202,18 +206,19 @@ class Gen_Charts:
     
             
         # Adding some text for labels, title and custom x-axis tick labels, etc.
-        ax.set_xlabel('Transition Types',fontsize = 18)
+        ax.set_xlabel('Transition Types',fontsize = 20)
         if (areaunit == 'pixels'):
-            ax.set_ylabel('Size of transition patch (number of pixels)',fontsize = 14)
+            ax.set_ylabel('Size of transition patch (number of pixels)',fontsize = 20)
         if (areaunit == 'sqm2'):
-            ax.set_ylabel('Size of transition patch (Square Meters)',fontsize = 14)
+            ax.set_ylabel('Size of transition patch (Square Meters)',fontsize = 20)
         if (areaunit == 'km2'):
-            ax.set_ylabel('Size of transition patch (km²)',fontsize = 14)
+            ax.set_ylabel('Size of transition patch (km²)',fontsize = 20)
         if log_scale:
             ax.set_yscale('log')    
         #ax.set_title('Bar chart by column names')
         ax.set_xticks(x)
         ax.set_xticklabels(df_types.columns,rotation = 45)
+        ax.tick_params(axis='both', labelsize=18)
         # Creating the legend
         from matplotlib.lines import Line2D
         from matplotlib.patches import Rectangle
@@ -225,13 +230,14 @@ class Gen_Charts:
         ]
         
     
-        ax.legend(handles=legend_elements, handleheight = 2, handlelength = 1, loc='upper left',ncol = 3) 
+        ax.legend(handles=legend_elements, handleheight = 2, handlelength = 1, loc='upper left',ncol = 3,fontsize = 20) 
         # Display the plot
         title = 'Distribution of transition patch sizes'
-        fig.tight_layout()
+        
         
         if flag_ax is False:
             #plt.show()   
+            fig.tight_layout()
             return fig, title
         else:
             return ax
@@ -259,7 +265,8 @@ class Gen_Charts:
         if ax is None:
             fig, ax = plt.subplots(figsize=(10,6))
             flag_ax = False
-    
+        elif ax is not None:
+            flag_ax = True
         df_types = self.df_patch_num.iloc[:, 2:]
         
         # Setting the positions and width for the bars
@@ -281,17 +288,19 @@ class Gen_Charts:
                               edgecolor = 'white',color = colorlist)
         
         # Adding some text for labels, title and custom x-axis tick labels, etc.
-        ax.set_xlabel('Transition Types',fontsize = 18)
-        ax.set_ylabel('Number of Transition Patches', fontsize = 14)
+        ax.set_xlabel('Transition Types',fontsize = 20)
+        ax.set_ylabel('Number of Transition Patches', fontsize = 20)
         #ax.set_title('Bar chart by column names')
         ax.set_xticks(x)
         ax.set_xticklabels(df_types.columns,rotation = 45)
+        ax.tick_params(axis='both', labelsize=18)
         #ax.legend()
         title = 'Number of transition patch for each transition type'
-        fig.tight_layout()
+        
         if flag_ax is False:
         # Display the plot
             #plt.show()    
+            fig.tight_layout()
             return fig,title
         else:
             return ax
@@ -373,6 +382,8 @@ class Gen_Charts:
         ### PLOT INCREASE AND DECREASE ####
             fig, ax = plt.subplots(figsize=(10,6))
             ax_flag = False
+        elif ax is not None:
+            ax_flag = True 
         
         
         xlabels=np.array(year)
@@ -403,18 +414,19 @@ class Gen_Charts:
             for i in range(4):
                 #print(i+1,df_indey.iloc[:,i+1],width,bargheight.iloc[:,i+1],colorlist[i])
                 p.append(ax.bar(df_indey['year'],df_indey.iloc[:,i+1],width=width,bottom=bargheight.iloc[:,i+1], color = colorlist[i], align='edge', label = legendlist[i]))
-            ax.set_xlabel('Time Interval',fontsize=14)
+            ax.set_xlabel('Time Interval',fontsize=20)
             print(xlabels)
             ax.set_xticks(xlabels.astype(int))  # Set the positions of the ticks
             ax.set_xticklabels(xlabels)         # Set the labels for the ticks  
-            ax.set_ylabel('Annual decrease and increase (number of patches)',fontsize=12)
+            ax.set_ylabel('Annual decrease and increase \n (number of patches)',fontsize=20)
+            ax.tick_params(axis='both', which='major', labelsize=18)
         if(self.type_ == 'compare'):    
             for i in range(4):
                 #print(i+1,df_indey.iloc[:,i+1],width,bargheight.iloc[:,i+1],colorlist[i])
                 p.append(ax.bar(x,df_indey.iloc[:,i+1],width=width,bottom=bargheight.iloc[:,i+1], color = colorlist[i], align='center', label = legendlist[i]))
             
-            ax.set_xlabel('Time',fontsize = 14)
-            ax.set_ylabel('Decrease and increase (number of patches)',fontsize=12)
+            ax.set_xlabel('Time',fontsize = 20)
+            ax.set_ylabel('Decrease and increase \n (number of patches)',fontsize=20)
             plt.xticks(x,xlabels)
 
         ax.axhline(y=0,color='0',linewidth=0.5)
@@ -426,11 +438,12 @@ class Gen_Charts:
         if(legend == 'Yes'):
             handles, labels = ax.get_legend_handles_labels()
             new_order = [0, 4, 3, 1, 2, 5]  # Order to display in legend
-            ax.legend([handles[i] for i in new_order], [labels[i] for i in new_order], ncol=1, bbox_to_anchor=(1.1, 0.5), loc='lower center')        
+            ax.legend([handles[i] for i in new_order], [labels[i] for i in new_order], ncol=1, frameon = False, bbox_to_anchor=(1, 0.5), loc='center left',fontsize = 18)        
         
-        fig.tight_layout()
+        
         if ax_flag is False:
             #plt.show()
+            fig.tight_layout()
             return fig, title
         else:
             return ax
@@ -526,6 +539,8 @@ class Gen_Charts:
         if ax is None:
             fig, ax = plt.subplots(figsize=(10,6))
             ax_flag = False
+        elif ax is not None:
+            ax_flag = True
         
         
         xlabels=np.array(year).astype('str')
@@ -558,10 +573,10 @@ class Gen_Charts:
                     p.append(ax.bar(dfbarsize['year'],dfbarsize.iloc[:,i+1],width=width,bottom=dfgainbottom.iloc[:,i], color = colorlist[i], align='edge', label = legendlist[i]))
                 if (i >= n/2):
                     p.append(ax.bar(dfbarsize['year'],dfbarsize.iloc[:,i+1],width=width,bottom=dflossbottom.iloc[:,i-int(n/2)], color = colorlist[i], align='edge', label = legendlist[i]))
-            ax.set_xlabel('Time Interval',fontsize=14)
+            ax.set_xlabel('Time Interval',fontsize=20)
             ax.set_xticks(xlabels.astype(int))  # Set the positions of the ticks
             ax.set_xticklabels(xlabels)         # Set the labels for the ticks
-                
+            ax.tick_params(axis='both', which='major', labelsize=18)
         if(type_ == 'compare'):
             for i in range(len(dfbarsize.columns)-1):
                 #print(i)
@@ -569,23 +584,23 @@ class Gen_Charts:
                     p.append(ax.bar(x,dfbarsize.iloc[:,i+1],width=width,bottom=dfgainbottom.iloc[:,i], color = colorlist[i], align='center', label = legendlist[i]))
                 if (i >= n/2):
                     p.append(ax.bar(x,dfbarsize.iloc[:,i+1],width=width,bottom=dflossbottom.iloc[:,i-int(n/2)], color = colorlist[i], align='center', label = legendlist[i]))
-            ax.set_xlabel('Time',fontsize = 14)       
+            ax.set_xlabel('Time',fontsize = 20)       
             plt.xticks(x,xlabels)
                        
         if(option == 'percentage'):
             if(type_ == 'change'):
-                ax.set_ylabel("Annual loss and gain (% out of Union Presence)",fontsize = 14)
+                ax.set_ylabel("Annual loss and gain (% out of Union Presence)",fontsize = 20)
             if(type_ == 'compare'):
-                ax.set_ylabel("Loss and gain (% out of Union Presence)",fontsize = 14)
+                ax.set_ylabel("Loss and gain (% out of Union Presence)",fontsize = 20)
         if(option == 'area'):
             if(type_ == 'change' and areaunit == 'pixels'):
-                ax.set_ylabel('Annual loss and gain (number of pixels)',fontsize=14)
+                ax.set_ylabel('Annual loss and gain (number of pixels)',fontsize=20)
             if(type_ == 'change' and areaunit == 'sqm2'):
-                ax.set_ylabel('Annual loss and gain (Square Meters)',fontsize = 14)
+                ax.set_ylabel('Annual loss and gain (Square Meters)',fontsize = 20)
             if(type_ == 'change' and areaunit == 'km2'):
-                ax.set_ylabel('Annual loss and gain (km²)',fontsize = 14)
+                ax.set_ylabel('Annual loss and gain (km²)',fontsize = 20)
             if(type_ == 'compare'):
-                ax.set_ylabel("Loss and gain (number of pixels)",fontsize = 14)
+                ax.set_ylabel("Loss and gain (number of pixels)",fontsize = 20)
         #plt.ylim(-2,2)
         ax.axhline(y=0,color='0',linewidth=0.5)
         
@@ -596,13 +611,14 @@ class Gen_Charts:
         if(legend == 'yes'):
             handles, labels = ax.get_legend_handles_labels()
             new_order = [0, 5, 4, 3, 2, 1,6,7,8,9]  # Order to display in legend
-            ax.legend([handles[i] for i in new_order], [labels[i] for i in new_order], ncol=1, bbox_to_anchor=(1.1, 0.35), loc='lower center')
+            ax.legend([handles[i] for i in new_order], [labels[i] for i in new_order], ncol=1, bbox_to_anchor=(1.2, 0.1), frameon = False,loc='lower center', fontsize = 18)
     
-        fig.tight_layout()
+        
         title = 'Annual Gross Loss and Gross Gain by Transition Types'
         
         if ax_flag is False:
             #plt.show()
+            fig.tight_layout()
             return fig,title
         else:
             return ax        

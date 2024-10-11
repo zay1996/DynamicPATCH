@@ -29,8 +29,8 @@ result_exp = main.run_dynamicpatch(
         targ_pre = 1,
         study_area = None,
         map_show = False,
-        chart_show = False,
-        #unit = 'sqm2', # let program decide automatically
+        chart_show = True,
+        unit = 'pixels', 
         log_scale = False, 
         export_map = False,
         width = 0.35
@@ -252,30 +252,31 @@ fig.legend(handles=group3, loc='lower center', bbox_to_anchor=(0.5, -.03), ncol=
 
 #fig.legend(handles=patches, loc='lower center', bbox_to_anchor=(0.5, 0.0001), ncol = 6,fontsize=14)
 #plt.subplots_adjust(left=0.2, right=1, top=0.95, bottom=0.1)
-plt.savefig(filepath + 'example_plot_new.png', bbox_inches='tight',format='png',dpi = 1200)
+#plt.savefig(filepath + 'example_plot_new.png', bbox_inches='tight',format='png',dpi = 1200)
 #plt.tight_layout()
 plt.show()
 
 
 #%%
-import Statsnew
-import stacked_bar
-
+import importlib
+from dynamicpatch import create_charts
+importlib.reload(create_charts) 
 filepath = 'D:\\OneDrive - Clark University\\Desktop\\Research\\patchmanuscript\\graphs\\'
-df_patch_num,df_patch_size, patch_ave, patch_median, patch_ave_q1,patch_ave_q3\
- = stacked_bar.countnumsize(pattern,areaunit = 'pixels')
+
+show_charts = create_charts.Gen_Charts(pattern_exp,areaunit = 'pixels')
+
+
 
 # Create a new figure with specified size and gridspec for layout control
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 6))
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(22, 6))
 
-# Plot second figure (fig2) on the right
-fig1 = stacked_bar.gainloss_stackedbars(pattern,df_patch_size,option = 'area',areaunit = 'pixels',ax = ax1)
+fig1 = show_charts.gainloss_stackedbars(ax = ax1)
+fig2 = show_charts.inde_stackedbars(df_inde_all_exp,ax = ax2)
+
 ax1.set_title('(a)', loc='left', fontsize=20, weight='bold')  # Label (b) on the top left of ax2
-# Plot first figure (fig1) on the left
-fig2 = stacked_bar.inde_stackedbars(pattern,df_inde_all,ax = ax2)
 ax2.set_title('(b)', loc='left', fontsize=20, weight='bold')  # Label (a) on the top left of ax1
 
 # Adjust layout and save the figure
 plt.tight_layout()
-plt.savefig(filepath + 'bar1_bar2.png', bbox_inches='tight',format='png',dpi=1200)  # Save the combined plot as PNG
+plt.savefig(filepath + 'bar1_bar2_BF.png', bbox_inches='tight',format='png',dpi=1200)  # Save the combined plot as PNG
 plt.show()

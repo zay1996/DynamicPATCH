@@ -43,7 +43,7 @@ df_inde_all_pond,data_pond,dataval_pond, binary_pond = pond_outputs
 ## specify the parameters 
 from dynamicpatch import main
 result_marsh = main.run_dynamicpatch(
-        workpath = "D:/OneDrive - Clark University/Desktop/Research/patchmanuscript/inputs/marshbinary.tif",
+        workpath = os.path.dirname(os.path.dirname(os.getcwd())) + '/inputs/marshbinary.tif',
         year = [
         1938,
         1971,
@@ -111,14 +111,14 @@ for i in range(3):
     ax.axis("off")
     ax.set_title(str(year[i]), fontsize = 30)
     if(i==2):
-        patches = [mpatches.Patch(color=colorlist[i], label=lclist[i]) for i in np.arange(len(lclist))]
+        patches = [mpatches.Patch(facecolor=colorlist[i], edgecolor = 'black',label=lclist[i]) for i in np.arange(len(lclist))]
         # put those patched as legend-handles into the legend
-        ax.legend(handles=patches,bbox_to_anchor=(1.01, 1), loc=2, borderaxespad=0. )
+        ax.legend(handles=patches,bbox_to_anchor=(1.01, 1), loc=2, borderaxespad=0. ,fontsize = 20)
         scalebar = ScaleBar(res, location='lower right')  # 1 pixel = 2 meter
         ax.add_artist(scalebar)
 
 
-#plt.savefig(filepath + 'studyarea'+'map.png',  bbox_inches='tight',format='png', dpi = 600) 
+plt.savefig(filepath + 'studyarea'+'mapBF.png',  bbox_inches='tight',format='png', dpi = 600) 
 #%% generate result graph, without zoom in 
 from dynamicpatch import create_charts
 from dynamicpatch import create_maps
@@ -156,9 +156,10 @@ plt.show()
 
 
 #%% generate result graph, with zoom in 
-filepath = 'D:\\OneDrive - Clark University\\Desktop\\Research\\patchmanuscript\\graphs\\'
+filepath = filepath =  os.path.dirname(os.path.dirname(os.getcwd())) + '/graphs/'
 from dynamicpatch import create_charts
 from dynamicpatch import create_maps
+importlib.reload(create_maps)  
 import matplotlib.patches as mpatches
 import matplotlib.colors as colors
 from dynamicpatch.config import df_cat
@@ -170,11 +171,11 @@ workpath, year, connectivity, targ_pre, in_nodata, FileType, dataset,study_area 
 params = proc_params
 absence, presence, nodata, nt, nl, ns, connectivity = params
 # Create the figure and axes with increased gap between rows
-fig = plt.figure(figsize=(24, 34))
+fig = plt.figure(figsize=(24, 38))
 ncol_ = 6
 nrow_ = 4
 gs = fig.add_gridspec(nrow_, ncol_, height_ratios=[1.5, 0.5, 1.5, 0.5], \
-                      width_ratios=[0.5,0.5,0.5,0.5,0.5,0.5], hspace=0.1, wspace=0.1)
+                      width_ratios=[0.5,0.5,0.5,0.5,0.5,0.5], hspace=0.15, wspace=0.1)
 categorylist = list(df_cat.sort_values(by='Value')['Type'])
 for cat in categorylist:
     colors_ = df_cat.loc[df_cat['Type'] == cat, 'Color']
@@ -221,7 +222,7 @@ ax_tr[3] = plt.subplot(gs[3,5])
 
 
 create_maps.pattern_map(0,marshpattern, res = res, ax=ax_main[0],north_arrow = False)
-create_maps.pattern_map(1,marshpattern, res = res, ax=ax_main[1])
+create_maps.pattern_map(1,marshpattern, res = res, ax=ax_main[1],north_arrow = False)
 create_maps.pattern_map(0,pondpattern, res = res, ax=ax_main[2], north_arrow = False)
 create_maps.pattern_map(1,pondpattern, res = res, ax=ax_main[3])
 
@@ -229,16 +230,16 @@ create_maps.pattern_map(1,pondpattern, res = res, ax=ax_main[3])
 for i in range(4):
     ax_main[i].axis('off')
 
-ax_main[0].set_title('Marsh', fontsize = 30)
-ax_main[2].set_title('Pond', fontsize = 30)
+ax_main[0].set_title('Marsh', fontsize = 35)
+ax_main[2].set_title('Pond', fontsize = 35)
 
 ax_main[0].text(-0.05, 0.5, str(year[0]) + ' - ' + str(year[1]), fontsize=30, va='center', ha='right', transform=ax_main[0].transAxes)
 ax_main[1].text(-0.05, 0.5, str(year[1]) + ' - ' + str(year[2]), fontsize=30, va='center', ha='right', transform=ax_main[1].transAxes)
 
-ax_main[0].set_title('(a)', loc='left', fontsize=20, weight='bold')  # Label (b) on the top left of ax2
-ax_main[1].set_title('(c)', loc='left', fontsize=20, weight='bold')  # Label (b) on the top left of ax2
-ax_main[2].set_title('(b)', loc='left', fontsize=20, weight='bold')  # Label (b) on the top left of ax2
-ax_main[3].set_title('(d)', loc='left', fontsize=20, weight='bold')  # Label (b) on the top left of ax2
+ax_main[0].set_title('(a)', loc='left', fontsize=25, weight='bold')  # Label (b) on the top left of ax2
+ax_main[1].set_title('(c)', loc='left', fontsize=25, weight='bold')  # Label (b) on the top left of ax2
+ax_main[2].set_title('(b)', loc='left', fontsize=25, weight='bold')  # Label (b) on the top left of ax2
+ax_main[3].set_title('(d)', loc='left', fontsize=25, weight='bold')  # Label (b) on the top left of ax2
 
 
 # Create a single legend at the bottom of the figure with larger font size
@@ -295,7 +296,7 @@ for i, (x, y) in enumerate(zoom_areas):
             patches.append(mpatches.Patch(facecolor='white', edgecolor='black', label=binarylist[b], linewidth=1.5))
         else:
             patches.append(mpatches.Patch(color=color, label=binarylist[b]))
-    ax_binary1.legend(handles=patches,bbox_to_anchor=(0.00, 0), loc=2, ncol = 2,borderaxespad=0. )
+    ax_binary1.legend(handles=patches,bbox_to_anchor=(0.00, 0), loc=2, ncol = 2,borderaxespad=0. ,fontsize = 18)
     if(i < 2):
         ax_binary1.set_title(str(year[i]),fontsize = 20)
     if(i >=2):
@@ -329,36 +330,43 @@ for i, (x, y) in enumerate(zoom_areas):
     
     #ax_binary1.text(-0.05, 1.05, labels[i], transform=ax_binary1.transAxes, fontsize=20, fontweight='bold', va='top', ha='right')
 patches = [mpatches.Patch(color=colorlist[i], label=categorylist[i]) for i in range(len(categorylist))][1:]
-fig.legend(handles=patches, loc='lower center', bbox_to_anchor=(0.5, 0.001), ncol = 6,fontsize=16)
+fig.legend(handles=patches, loc='lower center', bbox_to_anchor=(0.5, 0.001), ncol = 6,fontsize=20)
 plt.subplots_adjust(bottom=0.05)
-#plt.tight_layout()
-plt.savefig(filepath + 'pondmarsh'+'mapNEW.tif', dpi = 600, bbox_inches='tight',format='tif') 
+plt.tight_layout()
+plt.savefig(filepath + 'pondmarsh'+'mapNEWBF1.png', dpi = 500, bbox_inches='tight',format='png') 
 plt.show()
 
 
 
 #%%
 ## stacked bar
-filepath = 'D:\\OneDrive - Clark University\\Desktop\\Research\\patchmanuscript\\graphs\\'
-import stacked_bar
-df_patch_num_marsh,df_patch_size_marsh, patch_ave_marsh, patch_median_marsh, patch_ave_q1_marsh,patch_ave_q3_marsh = stacked_bar.countnumsize(marshpattern, type_ = type_,areaunit = 'km2')
-df_patch_num_pond,df_patch_size_pond, patch_ave_pond, patch_median_pond,patch_ave_q1_pond,patch_ave_q3_pond = stacked_bar.countnumsize(pondpattern, type_ = type_,areaunit = 'km2')
+import importlib 
+
+filepath =  os.path.dirname(os.path.dirname(os.getcwd())) 
+
+from dynamicpatch import create_charts 
+importlib.reload(create_charts)  
+show_charts_pond = create_charts.Gen_Charts(pondpattern)
+show_charts_marsh = create_charts.Gen_Charts(marshpattern)
 
 # Create a new figure with specified size and gridspec for layout control
 fig, axes = plt.subplots(2, 2, figsize=(26, 12))
 
+fig1 = show_charts_marsh.gainloss_stackedbars(ax = axes[0,0],legend = 'no')
+fig2 = show_charts_marsh.inde_stackedbars(df_inde_all_marsh,ax = axes[1,0],legend = 'no')
 
-fig1 = stacked_bar.gainloss_stackedbars(marshpattern,df_patch_size_marsh,option = 'area',legend = 'no',ax = axes[0,0],areaunit = 'km2')
+
+fig1 = show_charts_pond.gainloss_stackedbars(ax = axes[0,1])
+fig2 = show_charts_pond.inde_stackedbars(df_inde_all_pond, ax = axes[1,1])
+
+
 axes[0,0].set_title('(a)', loc='left', fontsize=20, weight='bold')  # Label (b) on the top left of ax2
 
-fig2 = stacked_bar.inde_stackedbars(marshpattern,df_inde_all_marsh,ax = axes[1,0],legend = 'no')
 axes[1,0].set_title('(c)', loc='left', fontsize=20, weight='bold')  # Label (a) on the top left of ax1
 
 
-fig3 = stacked_bar.gainloss_stackedbars(pondpattern,df_patch_size_pond,option = 'area',ax = axes[0,1], areaunit = 'km2')
 axes[0,1].set_title('(b)', loc='left', fontsize=20, weight='bold')  # Label (b) on the top left of ax2
 
-fig4 = stacked_bar.inde_stackedbars(pondpattern,df_inde_all_pond,ax = axes[1,1])
 axes[1,1].set_title('(d)', loc='left', fontsize=20, weight='bold')  # Label (a) on the top left of ax1
 
 axes[0,0].text(0.5, 1.1, 'Marsh', fontsize=30, va='top', ha='center', transform=axes[0,0].transAxes)
@@ -366,8 +374,8 @@ axes[0,1].text(0.5, 1.1, 'Pond', fontsize=30, va='top', ha='center', transform=a
 
 
 # Adjust layout and save the figure
-plt.tight_layout()
-#plt.savefig(filepath + 'pondmarsh'+'stackedbar.png', format='png',dpi = 1200)  # Save the combined plot as PNG
+fig.tight_layout()
+plt.savefig(filepath + '/graphs/pondmarsh'+'stackedbarBF1.png', format='png',dpi = 600)  # Save the combined plot as PNG
 plt.show()
 
     
@@ -376,12 +384,12 @@ perc_size_loss_marsh_ave = (df_patch_size_marsh.iloc[:,6:-1].sum()/df_patch_size
 perc_size_loss_marsh = df_patch_size_marsh.iloc[:,6:-1].div(df_patch_size_marsh.iloc[:,6:-1].sum(axis = 1),axis = 0)
 
 
-perc_size_loss_marsh.to_csv(filepath+ 'marshperc.csv')
+#perc_size_loss_marsh.to_csv(filepath+ 'marshperc.csv')
 perc_size_gain_marsh = (df_patch_size_marsh.iloc[:,2:6].sum()/df_patch_size_marsh.iloc[:,2:6].sum().sum())*100
 
 perc_size_loss_pond_ave = (df_patch_size_pond.iloc[:,6:-1].sum()/df_patch_size_pond.iloc[:,6:-1].sum().sum())*100
 perc_size_loss_pond = df_patch_size_pond.iloc[:,6:-1].div(df_patch_size_pond.iloc[:,6:-1].sum(axis = 1),axis = 0)
-perc_size_loss_pond.to_csv(filepath+ 'pondperc.csv')
+#perc_size_loss_pond.to_csv(filepath+ 'pondperc.csv')
 
 
 #%% get tables for number of increase decrease
@@ -399,23 +407,22 @@ df_patch_size_marsh.to_csv(filepath + 'marsharea.csv')
 df_patch_size_pond.to_csv(filepath + 'pondarea.csv')
 
 #%% bar charts 
-import stacked_bar
-df_patch_num_marsh,df_patch_size_marsh, patch_ave_marsh, patch_median_marsh, patch_ave_q1_marsh,patch_ave_q3_marsh = stacked_bar.countnumsize(marshpattern, type_ = type_)
-df_patch_num_pond,df_patch_size_pond, patch_ave_pond, patch_median_pond,patch_ave_q1_pond,patch_ave_q3_pond = stacked_bar.countnumsize(pondpattern, type_ = type_)
+from dynamicpatch import create_charts
+importlib.reload(create_charts)  
+show_charts_pond = create_charts.Gen_Charts(pondpattern)
+show_charts_marsh = create_charts.Gen_Charts(marshpattern)
 
 
-fig, axes = plt.subplots(2, 2, figsize=(26, 14))
+fig, axes = plt.subplots(2, 2, figsize=(26, 16))
 
-fig1 = stacked_bar.plot_num(df_patch_num_marsh,year, width = 0.35, type_ = type_,ax = axes[0,0])
+fig1 = show_charts_pond.plot_num(ax = axes[0,0])
+fig2 = show_charts_pond.plot_ave_size(ax = axes[1,0])
+fig3 = show_charts_marsh.plot_num(ax = axes[0,1])
+fig4 = show_charts_marsh.plot_ave_size(ax = axes[1,1])
+
 axes[0,0].set_title('(a)', loc='left', fontsize=20, weight='bold')  # Label (b) on the top left of ax2
-fig2 = stacked_bar.plot_ave_size(patch_ave_marsh, patch_median_marsh,patch_ave_q1_marsh,patch_ave_q3_marsh, \
-                                 year,type_ = type_, log_scale = True, width = 0.35,ax = axes[1,0])
 axes[0,1].set_title('(b)', loc='left', fontsize=20,weight='bold')  # Label (b) on the top left of ax2
-
-fig3 = stacked_bar.plot_num(df_patch_num_pond,year, width = 0.35, type_ = type_,ax = axes[0,1])
 axes[1,0].set_title('(c)', loc='left', fontsize=20, weight='bold') 
-fig4 = stacked_bar.plot_ave_size(patch_ave_pond, patch_median_pond,patch_ave_q1_pond,patch_ave_q3_pond, \
-                                 year,type_ = type_, log_scale = True, width = 0.35,ax = axes[1,1])
 axes[1,1].set_title('(d)', loc='left', fontsize=20, weight='bold') 
 
 axes[0,0].text(0.5, 1.1, 'Marsh', fontsize=30, va='top', ha='center', transform=axes[0,0].transAxes)
@@ -424,13 +431,22 @@ axes[0,1].text(0.5, 1.1, 'Pond', fontsize=30, va='top', ha='center', transform=a
 ## to do: revise map, make bar chart (add mean), update stacked bar. make table, make a line chart showing net change 
 
 plt.tight_layout()
-plt.savefig(filepath + 'pondmarsh'+'statsbar.pdf', format='pdf')  # Save the combined plot as PNG
+plt.savefig(filepath + '/graphs/pondmarsh'+'statsbarBF.png', format='png',dpi = 600)  # Save the combined plot as PNG
 plt.show()
 
 
-#%% export number table to csv
-df_patch_num_marsh.to_csv(filepath + 'marshnum.csv')
-df_patch_num_pond.to_csv(filepath + 'pondnum.csv')
+#%% export table to csv
+filepath =  os.path.dirname(os.path.dirname(os.getcwd()))
+show_charts_pond = create_charts.Gen_Charts(pondpattern, areaunit = 'sqm2')
+show_charts_marsh = create_charts.Gen_Charts(marshpattern, areaunit = 'sqm2')
+df_patch_num_pond,df_patch_size_pond, patch_ave_pond, patch_median_pond = show_charts_pond.countnumsize()
+df_patch_num_marsh,df_patch_size_marsh, patch_ave_marsh, patch_median_marsh = show_charts_marsh.countnumsize()
+
+df_patch_num_marsh.to_csv(filepath + '/output/marshnum.csv')
+df_patch_num_pond.to_csv(filepath + '/output/pondnum.csv')
+
+patch_ave_pond.to_csv(filepath + '/output/pondave.csv')
+patch_ave_marsh.to_csv(filepath + '/output/marshave.csv')
 
 #%% net change in number of patches
 
