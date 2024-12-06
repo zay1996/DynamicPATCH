@@ -190,6 +190,8 @@ class Gen_Charts:
         # Calculate asymmetrical error
         
         iter_val = len(year[0:-1])
+        
+        width = 0.55 - nt*0.1
     
         for y in range(iter_val):
             q1 = self.patch_ave_q1.iloc[y,2:]
@@ -273,6 +275,8 @@ class Gen_Charts:
         x = np.arange(len(df_types.columns))  # the label locations
         #width = 0.35  # the width of the bars
         
+        width = 0.55 - nt*0.1
+        
         colorlist = []
         for cat in df_types.columns:
             colors_ = df_cat.loc[df_cat['Type'] == cat, 'Color']
@@ -353,7 +357,7 @@ class Gen_Charts:
         return df_inde,df_indey,inline,deline
         # compute N
         
-    def inde_stackedbars(self,df_inde,ax = None,legend = 'Yes'):
+    def inde_stackedbars(self,df_inde,ax = None,legend = 'Yes', rotation = 0, ax_labels = None):
         '''
         Create stacked bars for annual gross increase and gross decrease in 
         number of patches
@@ -367,7 +371,9 @@ class Gen_Charts:
             Figure axis, use when plot as a subfigure. The default is None.
         legend : String, optional
             Whether a legend is needed. The default is 'Yes'.
-    
+        ax_labels: List or Numpy Array, optional
+            Whether x axis label is customized. The default is None
+            
         Returns
         -------
         fig: Figure
@@ -380,13 +386,16 @@ class Gen_Charts:
         title = 'Annual Gross Increase and Decrease in Number of Patches'
         if ax is None:
         ### PLOT INCREASE AND DECREASE ####
-            fig, ax = plt.subplots(figsize=(10,6))
+            fig, ax = plt.subplots(figsize=(12,6))
             ax_flag = False
         elif ax is not None:
             ax_flag = True 
         
-        
-        xlabels=np.array(year)
+        if ax_labels is None:
+            xlabels=np.array(year).astype('str')
+        elif ax_labels is not None:
+            xlabels = ax_labels
+            
         
         if(self.type_=='change'):
             width=np.diff(year)
@@ -416,8 +425,8 @@ class Gen_Charts:
                 p.append(ax.bar(df_indey['year'],df_indey.iloc[:,i+1],width=width,bottom=bargheight.iloc[:,i+1], color = colorlist[i], align='edge', label = legendlist[i]))
             ax.set_xlabel('Time Interval',fontsize=20)
             print(xlabels)
-            ax.set_xticks(xlabels.astype(int))  # Set the positions of the ticks
-            ax.set_xticklabels(xlabels)         # Set the labels for the ticks  
+            ax.set_xticks(np.array(year).astype(int))  # Set the positions of the ticks
+            ax.set_xticklabels(xlabels,rotation = rotation)         # Set the labels for the ticks  
             ax.set_ylabel('Annual decrease and increase \n (number of patches)',fontsize=20)
             ax.tick_params(axis='both', which='major', labelsize=18)
         if(self.type_ == 'compare'):    
@@ -508,7 +517,7 @@ class Gen_Charts:
         
         return dfbarsize,gainline,lossline
     
-    def gainloss_stackedbars(self, option = 'area',ax = None,legend = 'yes'):
+    def gainloss_stackedbars(self, option = 'area',ax = None,legend = 'yes',ax_labels = None,rotation = 0):
         '''
         Plot the annual gains and losses of each transition type 
     
@@ -521,7 +530,8 @@ class Gen_Charts:
             Figure axis, use when plot as a subfigure. The default is None.
         legend : String, optional
             Whether a legend is needed. The default is 'Yes'.
-
+        ax_labels: List or Numpy Array, optional
+            Whether x axis label is customized. The default is None
         Returns
         -------
         fig: Figure
@@ -537,13 +547,16 @@ class Gen_Charts:
         n = len(dfbarsize.columns)-1
         ### PLOT LOSS AND GAIN SIZES ####
         if ax is None:
-            fig, ax = plt.subplots(figsize=(10,6))
+            fig, ax = plt.subplots(figsize=(12,6))
             ax_flag = False
         elif ax is not None:
             ax_flag = True
         
-        
-        xlabels=np.array(year).astype('str')
+        if ax_labels is None:
+            xlabels=np.array(year).astype('str')
+        elif ax_labels is not None:
+            xlabels = ax_labels
+            
         if (type_ == 'compare'):
             width = 0.7
             x = np.arange(len(xlabels)) 
@@ -574,8 +587,9 @@ class Gen_Charts:
                 if (i >= n/2):
                     p.append(ax.bar(dfbarsize['year'],dfbarsize.iloc[:,i+1],width=width,bottom=dflossbottom.iloc[:,i-int(n/2)], color = colorlist[i], align='edge', label = legendlist[i]))
             ax.set_xlabel('Time Interval',fontsize=20)
-            ax.set_xticks(xlabels.astype(int))  # Set the positions of the ticks
-            ax.set_xticklabels(xlabels)         # Set the labels for the ticks
+
+            ax.set_xticks(np.array(year).astype(int))  # Set the positions of the ticks
+            ax.set_xticklabels(xlabels,rotation = rotation)         # Set the labels for the ticks
             ax.tick_params(axis='both', which='major', labelsize=18)
         if(type_ == 'compare'):
             for i in range(len(dfbarsize.columns)-1):
@@ -611,9 +625,8 @@ class Gen_Charts:
         if(legend == 'yes'):
             handles, labels = ax.get_legend_handles_labels()
             new_order = [0, 5, 4, 3, 2, 1,6,7,8,9]  # Order to display in legend
-            ax.legend([handles[i] for i in new_order], [labels[i] for i in new_order], ncol=1, bbox_to_anchor=(1.2, 0.1), frameon = False,loc='lower center', fontsize = 18)
+            ax.legend([handles[i] for i in new_order], [labels[i] for i in new_order], ncol=1, bbox_to_anchor=(1, 0.5), frameon = False,loc='center left', fontsize = 18)
     
-        
         title = 'Annual Gross Loss and Gross Gain by Transition Types'
         
         if ax_flag is False:

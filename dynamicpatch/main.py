@@ -21,7 +21,8 @@ def run_dynamicpatch(
         unit = None, # let program decide automatically
         log_scale = True, 
         export_map = False,
-        width = 0.35):
+        width = 0.35,
+        rotation = 45):
     '''
     Run dynamic patch analysis in commandline 
     
@@ -70,7 +71,8 @@ def run_dynamicpatch(
     importlib.reload(processing)  
     processing.initialize()
     result = processing.run_analysis(
-        mapshow = map_show, chartsshow = chart_show, unit = unit, export_map = export_map, width = width, log_scale = log_scale)
+        mapshow = map_show, chartsshow = chart_show, unit = unit, \
+            export_map = export_map, width = width, log_scale = log_scale,rotation = rotation)
 
     
     return result 

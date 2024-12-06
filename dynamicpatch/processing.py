@@ -44,7 +44,15 @@ def initialize():
     return map_figs, binary_t
 
 
-def run_analysis(mapshow = True, chartsshow = True,unit = None, data = None, export_map = False, progress = None, width = 0.35, log_scale = True):           
+def run_analysis(mapshow = True, 
+                 chartsshow = True,
+                 unit = None, 
+                 data = None, 
+                 export_map = False, 
+                 progress = None, 
+                 width = 0.35, 
+                 log_scale = True,
+                 rotation = 0):           
     is_complete = False
 
     pattern = np.zeros((nt,nl,ns),dtype = 'int')
@@ -98,8 +106,8 @@ def run_analysis(mapshow = True, chartsshow = True,unit = None, data = None, exp
         fig1,title1 = show_charts.plot_ave_size(width = width, log_scale = log_scale)
         fig2,title2 = show_charts.plot_num(width = width)
         
-        fig3, title3 = show_charts.gainloss_stackedbars()
-        fig4, title4 = show_charts.inde_stackedbars(df_inde_all)
+        fig3, title3 = show_charts.gainloss_stackedbars(rotation = rotation)
+        fig4, title4 = show_charts.inde_stackedbars(df_inde_all,rotation = rotation)
         
         generated_charts.extend([fig1, fig2, fig3, fig4])
         chart_titles.extend([title1,title2,title3,title4])

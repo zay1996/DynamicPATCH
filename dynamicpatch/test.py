@@ -35,16 +35,17 @@ root.mainloop()
 
 
 #%% OPTION 2: run code yourself
+import os
+import dynamicpatch 
 from dynamicpatch import main
+package_dir = os.path.dirname(os.path.abspath(dynamicpatch.__file__)) # find directory of the package    
 ## specify the parameters 
 main.run_dynamicpatch(
-        workpath = "D:/OneDrive - Clark University/Desktop/Research/patchmanuscript/inputs/lcm",
-        year = [
-        1971,
-        1985,
-        1999
+        workpath = package_dir + '/static/example.xlsx',
+        year = [0,
+                1
     ],
-        in_nodata = 0, # optional, default = 0
+        in_nodata = -1, # optional, default = 0
         connectivity = 8, # optional, default = 8
         targ_pre = 1, # optional, default = 1
         study_area = None, # optional, default = None
@@ -52,6 +53,9 @@ main.run_dynamicpatch(
         chart_show = True, # optional, default = True 
         unit = None, # let program decide automatically
         log_scale = True, # optional
-        export_map = True, # optional, default = True
-        width = 0.35 # optional, default = 0.35
+        export_map = False, # optional, default = True
+        width = 0.35, # optional, default = 0.35
+        rotation = 45
     )
+
+# %%
