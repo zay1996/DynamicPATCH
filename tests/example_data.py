@@ -270,13 +270,13 @@ show_charts = create_charts.Gen_Charts(pattern_exp,areaunit = 'pixels')
 # Create a new figure with specified size and gridspec for layout control
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(22, 6))
 
-fig1 = show_charts.gainloss_stackedbars(ax = ax1)
-fig2 = show_charts.inde_stackedbars(df_inde_all_exp,ax = ax2)
+fig1 = show_charts.gainloss_stackedbars(ax = ax1,ax_labels = ['Initial Time','Final Time'])
+fig2 = show_charts.inde_stackedbars(df_inde_all_exp,ax = ax2,ax_labels = ['Initial Time','Final Time'])
 
 ax1.set_title('(a)', loc='left', fontsize=20, weight='bold')  # Label (b) on the top left of ax2
 ax2.set_title('(b)', loc='left', fontsize=20, weight='bold')  # Label (a) on the top left of ax1
 
 # Adjust layout and save the figure
 plt.tight_layout()
-plt.savefig(filepath + 'bar1_bar2_BF.png', bbox_inches='tight',format='png',dpi=1200)  # Save the combined plot as PNG
+plt.savefig(filepath + 'bar1_bar2_BF_new.png', bbox_inches='tight',format='png',dpi=1200)  # Save the combined plot as PNG
 plt.show()

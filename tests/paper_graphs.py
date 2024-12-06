@@ -158,6 +158,7 @@ plt.show()
 #%% generate result graph, with zoom in 
 filepath = filepath =  os.path.dirname(os.path.dirname(os.getcwd())) + '/graphs/'
 from dynamicpatch import create_charts
+import importlib
 from dynamicpatch import create_maps
 importlib.reload(create_maps)  
 import matplotlib.patches as mpatches
@@ -523,7 +524,7 @@ legend = fig.legend(handles=[bars_legend, lines_legend], loc='lower center', bbo
 legend.get_frame().set_linewidth(0) 
 plt.tight_layout()
 filepath = 'D:\\OneDrive - Clark University\\Desktop\\Research\\patchmanuscript\\graphs\\'
-plt.savefig(filepath + 'pondmarsh'+'netchange.tif', bbox_inches='tight',format='tif')
+plt.savefig(filepath + 'pondmarsh'+'netchange.jpg', dpi = 600,bbox_inches='tight',format='jpg')
 
 
 #%% net change in number of patches
