@@ -1,7 +1,7 @@
 
 A Python package for DynamicPATCH
 ================================================================================================
-Dynamic PAtch Transition CHaracterization in explicit space (DynamicPATCH) is a patch-based method that characterizes and quantifies eight types of mutually exclusive and collectively exaustive transition patterns: Appearing, Disappearing, Merging, Splitting, Filling, Perforating, Expanding, and Contracting. DynamicPATCH also computes gross changes in both area and number of patches. See more details about our method in our upcoming manuscript: Zhang et al. (2024) 
+Dynamic PAtch Transition CHaracterization in explicit space (DynamicPATCH) is a patch-based method that characterizes and quantifies eight types of mutually exclusive and collectively exaustive transition patterns: Appearing, Disappearing, Merging, Splitting, Filling, Perforating, Expanding, and Contracting. DynamicPATCH also computes gross changes in both area and number of patches. See more details about our method in our upcoming manuscript: Zhang A, Pontius RG, Bilintoh TM, Sangermano F, Rogan J. DynamicPATCH: Spatially Explicit Dynamic Patch Transition Characterization. Accepted. Landscape Ecology
 
 # 1. Installation 
 ----------------------
