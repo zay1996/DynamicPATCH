@@ -52,3 +52,7 @@ Note: due to an issue with the current version. Please restart the kernel when c
 
 ## Citation
 Please cite our upcoming publication if you are using DynamicPATCH for your research. 
+
+
+## Acknowledgement 
+The United States National Science Foundation's Division of Environmental Biology supported this work via grant OCE-2224608 entitled “LTER: Plum Island Ecosystems, the impact of changing landscapes and climate on interconnected coastal ecosystems”. Author A.Z. received funding from the Edna Bailey Sussman Trust via a grant entitled “Methods to characterize changes in salt marshes of estuarine ecosystems in response to sea level rise”.
