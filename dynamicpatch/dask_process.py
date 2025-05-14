@@ -1,14 +1,32 @@
-# -*- coding: utf-8 -*-
-"""
-the main script that runs the entire analysis.
-reads parameters and input data and run the analysis by calling other functions
 
-@author: Aiyin Zhang
-"""
 
+# %%
 import importlib 
+import dynamicpatch 
 from dynamicpatch import config 
 from dynamicpatch import config_new
+
+importlib.reload(config_new)
+
+#%% test 
+from dynamicpatch import config_new, read_data
+importlib.reload(config_new)
+importlib.reload(read_data)
+path = 'C:\\OneDrive - Clark University\\'
+datapath = path + 'Desktop\\Research\\PIE\\RefMapComp\\'
+file_name = 'PIE_classall_RF_3.tif'
+workpath = datapath + file_name
+targ_pre = 2
+in_nodata = 0
+year = [2010, 2012, 2014, 2016, 2018, 2021]
+type_ = 'raster'
+areaunit = 'km2'
+weight = False # only supported for tabular data 
+chunk_size = 1000
+connectivity = 8
+study_area = None
+
+#%%
 
 def run_dynamicpatch(
         workpath,
@@ -66,14 +84,14 @@ def run_dynamicpatch(
     '''
     
     
-    params, data, data_val = config_new.read_params\
+    params, data_val = config_new.read_params_dask\
         (workpath, year,targ_pre, connectivity,in_nodata, study_area)
-    from dynamicpatch import processing        
-    importlib.reload(processing)  
-    processing.initialize(params,data_val)
-    result = processing.run_analysis(
+    from dynamicpatch import processing_dask        
+    importlib.reload(processing_dask)  
+    
+    processing_dask.initialize(params,data_val)
+    result = processing_dask.run_analysis(
                                      params,
-                                     data,
                                      data_val,
                                      mapshow = map_show, 
                                      chartsshow = chart_show, 
@@ -86,4 +104,4 @@ def run_dynamicpatch(
 
     
     return result,params 
-        
+# %%

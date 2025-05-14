@@ -15,7 +15,8 @@ import dynamicpatch
 #from dynamicpatch import processing        
 #import importlib 
 #importlib.reload(processing)  
-from dynamicpatch.config import year, df_cat
+#from dynamicpatch.config import year, df_cat
+from dynamicpatch.config_new import df_cat
 from matplotlib_scalebar.scalebar import ScaleBar
 import matplotlib.image as mpimg
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
@@ -23,7 +24,7 @@ from matplotlib.font_manager import FontProperties
 
 
 
-def map_timepoint(tp,binary,absence,presence,res = None):
+def map_timepoint(year,tp,binary,absence,presence,res = None):
     '''
     Create initial maps of absence and presence at each time point
 
@@ -83,7 +84,7 @@ def map_timepoint(tp,binary,absence,presence,res = None):
     return fig 
 
 
-def pattern_map(tp,pattern,data=None, res=None, ax = None,frame = 'off', north_arrow = True, type_='change'):
+def pattern_map(year,tp,pattern,data=None, res=None, ax = None,frame = 'off', north_arrow = True, type_='change'):
     '''
     Create transition pattern maps 
 
@@ -127,16 +128,16 @@ def pattern_map(tp,pattern,data=None, res=None, ax = None,frame = 'off', north_a
     norm = colors.BoundaryNorm(boundaries, ncolors=11, clip=True)
     # Get geographic information from the GDAL dataset
     if data is not None:
-        geo_transform = data.GetGeoTransform()
-        x_origin = geo_transform[0]
-        y_origin = geo_transform[3]
-        pixel_width = geo_transform[1]
-        pixel_height = geo_transform[5]
-    
-        # Calculate extent in the original projection units
+        transform = data.transform  # Affine transformation
+        x_origin = transform.c     # same as geo_transform[0]
+        y_origin = transform.f     # same as geo_transform[3]
+        pixel_width = transform.a  # same as geo_transform[1]
+        pixel_height = transform.e # same as geo_transform[5]
+
+        # Calculate extent using pattern[tp] shape
         x_max = x_origin + pixel_width * pattern[tp].shape[1]
         y_min = y_origin + pixel_height * pattern[tp].shape[0]
-        extent = [x_origin,x_max,y_min,y_origin]
+        extent = [x_origin, x_max, y_min, y_origin]
     if ax is not None:
         flag_ax = True
     

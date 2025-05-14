@@ -11,11 +11,11 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
-from dynamicpatch.config import cat_dict, df_cat, year, nt, res, connectivity
+from dynamicpatch.config import cat_dict, df_cat
 
 
 class Gen_Charts:
-    def __init__(self, pattern, areaunit = None,type_ = 'change'):
+    def __init__(self, pattern, year, connectivity, nt, res, areaunit = None,type_ = 'change'):
         '''
         Initialize parameters needed for creating graphics 
 
@@ -53,6 +53,10 @@ class Gen_Charts:
         self.patch_ave_q1 = pd.DataFrame(columns = ['year'] + list(cat_dict.keys())[1:])
         self.patch_ave_q3 = pd.DataFrame(columns = ['year'] + list(cat_dict.keys())[1:])
         self.pattern = pattern
+        self.year = year
+        self.nt = nt
+        self.connectivity = connectivity
+        self.res = res
         # automatically assign appropriate areaunit 
         size_map = len(str(np.size(pattern)*res))
         self.areaunit = areaunit
@@ -92,6 +96,8 @@ class Gen_Charts:
         '''
         areaunit = self.areaunit
         interval = []
+        year = self.year
+        res = self.res
         for i,y in enumerate(year[0:-1]):
             interval.append(str(year[i])+'-' + str(year[i+1]))
             
@@ -102,6 +108,7 @@ class Gen_Charts:
         self.patch_ave_q1['year'] = interval 
         self.patch_ave_q3['year'] = interval
         self.patch_median['year'] = interval
+        
         iter_var = year[0:-1]
 
     
@@ -110,7 +117,7 @@ class Gen_Charts:
             num_patch, size_patch, ave_patch,med_patch,sem_patch,q1_patch,q3_patch = [],[],[],[],[],[],[]
             for c in df_cat['Value'][1:]:
                 tax_map = (self.pattern[i] == c).astype('uint8')
-                num_labels, patchlabels = cv2.connectedComponents(tax_map, connectivity=connectivity)
+                num_labels, patchlabels = cv2.connectedComponents(tax_map, connectivity=self.connectivity)
                 num_labels = num_labels - 1 # exclude background 
                 num_patch.append(num_labels)
                 #ave_patch.append(np.sum(tax_map)/num_labels)
@@ -171,7 +178,7 @@ class Gen_Charts:
         '''
         areaunit = self.areaunit
         if ax is None:
-            fig, ax = plt.subplots(figsize=(10,6))
+            fig, ax = plt.subplots(figsize=(12,8))
             flag_ax = False
         elif ax is not None:
             flag_ax = True
@@ -189,9 +196,9 @@ class Gen_Charts:
                 colorlist.append(color)
         # Calculate asymmetrical error
         
-        iter_val = len(year[0:-1])
+        iter_val = len(self.year[0:-1])
         
-        width = 0.55 - nt*0.1
+        width = 0.55 - self.nt*0.1
     
         for y in range(iter_val):
             q1 = self.patch_ave_q1.iloc[y,2:]
@@ -265,7 +272,7 @@ class Gen_Charts:
     
         '''   
         if ax is None:
-            fig, ax = plt.subplots(figsize=(10,6))
+            fig, ax = plt.subplots(figsize=(12,8))
             flag_ax = False
         elif ax is not None:
             flag_ax = True
@@ -275,7 +282,7 @@ class Gen_Charts:
         x = np.arange(len(df_types.columns))  # the label locations
         #width = 0.35  # the width of the bars
         
-        width = 0.55 - nt*0.1
+        width = 0.55 - self.nt*0.1
         
         colorlist = []
         for cat in df_types.columns:
@@ -283,9 +290,9 @@ class Gen_Charts:
             for color in colors_:
                 colorlist.append(color)
         if(self.type_ == 'change'):
-            iter_var = year[0:-1]
+            iter_var = self.year[0:-1]
         if(self.type_ == 'compare'):     
-            iter_var = year
+            iter_var = self.year
         for y in range(len(iter_var)):
             bars = ax.bar(x - width*(len(df_types)/2)+y*width, df_types.iloc[y], \
                           width, align = 'edge',label=self.df_patch_num.year[y],\
@@ -334,6 +341,7 @@ class Gen_Charts:
             Decrease Line.
     
         '''
+        year = self.year
         ########## CALCULATE GROSS INCREASE AND DECREASE OF EACH TYPE
         #grossin
         grossin = df_inde['Splitting'] + df_inde['Appearing']
@@ -383,6 +391,7 @@ class Gen_Charts:
     
         '''
         df_inde,df_indey,inline,deline = self.inde_table(df_inde)
+        year = self.year
         title = 'Annual Gross Increase and Decrease in Number of Patches'
         if ax is None:
         ### PLOT INCREASE AND DECREASE ####
@@ -483,7 +492,7 @@ class Gen_Charts:
         
         areaunit = self.areaunit
         pattern = self.pattern
-        
+        year = self.year
         # compute union presence v
         V = np.sum(pattern>0)/(year[-1] - year[0]) # in number of pixels 
             
@@ -542,7 +551,8 @@ class Gen_Charts:
         type_ = self.type_
         areaunit = self.areaunit
         dfbarsize,gainline,lossline = self.gainloss_table()
-    
+        year = self.year
+        nt = self.nt
     
         n = len(dfbarsize.columns)-1
         ### PLOT LOSS AND GAIN SIZES ####

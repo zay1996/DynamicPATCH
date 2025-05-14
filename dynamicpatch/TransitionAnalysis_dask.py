@@ -9,14 +9,14 @@ t0 and t1
 import numpy as np
 import os
 import pandas as pd
-import cv2
 import matplotlib.pyplot as plt
-    
+import dask.array as da
 from skimage.morphology import erosion, dilation
 from skimage.morphology import disk
 from skimage.morphology import square
-
 from dynamicpatch.config import cat_dict
+
+from dask_image import ndmorph,ndmeasure
 
 class TransitionAnalysis:
     def __init__(self,params,classt0,classt1,year):
@@ -25,54 +25,93 @@ class TransitionAnalysis:
         self.classt0 = classt0
         self.classt1 = classt1
         self.year = year
-        self.binaryclass = np.zeros((2, self.nl, self.ns), dtype='uint8')
-        self.binaryclass[0][self.classt0 == self.presence] = 1
-        self.binaryclass[1][self.classt1 == self.presence] = 1
+
         self.setup_data()        
+    @staticmethod
+    def get_change(binaryclass):
+        datacrosst = da.zeros_like(binaryclass[0],dtype = 'ubyte')
+        datacrosst = da.where((binaryclass[0] == 1) & (binaryclass[1] == 1),1,datacrosst)
+        datacrosst = da.where((binaryclass[0] == 2) & (binaryclass[1] == 2),2,datacrosst)
+        datacrosst = da.where((binaryclass[0] == 1) & (binaryclass[1] == 2),3,datacrosst)
+        datacrosst = da.where((binaryclass[0] == 2) & (binaryclass[1] == 1),4,datacrosst)
+
+        return datacrosst
     def setup_data(self):
-        self.datacrosst = np.zeros((self.nl, self.ns), dtype='byte')
-        for i in range(len(self.year)):
-            self.datacrosst[(self.binaryclass[0] == 0) & (self.binaryclass[1] == 0)] = 1
-            self.datacrosst[(self.binaryclass[0] == 1) & (self.binaryclass[1] == 1)] = 2
-            self.datacrosst[(self.binaryclass[0] == 0) & (self.binaryclass[1] == 1)] = 3
-            self.datacrosst[(self.binaryclass[0] == 1) & (self.binaryclass[1] == 0)] = 4
+        nl,ns,presence,classt0,classt1 = self.nl,self.ns,self.presence,self.classt0,self.classt1
 
-        self.gain = np.zeros((self.nl, self.ns), dtype='uint8')
-        self.gain[(self.datacrosst == 3)] = 1
+        binaryclass = da.zeros((2, nl, ns), dtype='uint8')
+        binaryclass[0] = self.classt0
+        binaryclass[1] = self.classt1
+        
+        self.binaryclass = binaryclass
 
-        self.loss = np.zeros((self.nl, self.ns), dtype='uint8')
-        self.loss[(self.datacrosst == 4)] = 1
+        change_template = da.zeros_like(binaryclass[0],dtype = 'int8')
+            # self.datacrosst = da.map_blocks(
+            #     self.get_change,
+            #     binaryclass,
+            #     dtype = 'int8',
+            #     meta = change_template,
+            #     new_axis = None,
+            #     chunks = (binaryclass.chunks[0][0] -1,) + binaryclass.chunks[1:]
+            # )
+        datacrosst = self.get_change(binaryclass)
+        self.datacrosst = datacrosst
 
-        self.persmap = np.zeros((self.nl, self.ns), dtype='uint8')
-        self.persmap[(self.datacrosst == 2)] = 1
+        gain = da.zeros((nl,ns), dtype='uint8')
+        gain[(datacrosst == 3)] = 1
 
-        self.absmap = np.zeros((self.nl, self.ns), dtype='uint8')
-        self.absmap[(self.datacrosst == 1)] = 1
+        loss = da.zeros((nl, ns), dtype='uint8')
+        loss[(datacrosst == 4)] = 1
 
-        self.gainpatchlabels, self.losspatchlabels, self.perpatchlabels = \
-            [np.zeros((self.nl, self.ns), dtype='int') for _ in range(3)]
-        self.prepatchlabelst0, self.prepatchlabelst1, self.upatch = \
-            [np.zeros((self.nl, self.ns), dtype='int') for _ in range(3)]
+        persmap = da.zeros((nl, ns), dtype='uint8')
+        persmap[(datacrosst == 2)] = 1
+
+        absmap = da.zeros((nl, ns), dtype='uint8')
+        absmap[(datacrosst == 1)] = 1
+
+        # gainpatchlabels, losspatchlabels, perpatchlabels = \
+        #     [da.zeros((nl, ns), dtype='int') for _ in range(3)]
+        # prepatchlabelst0, prepatchlabelst1, upatch = \
+        #     [da.zeros((nl, ns), dtype='int') for _ in range(3)]
+        
+        self.gain,self.loss,self.persmap,self.absmap = gain,loss,persmap,absmap
+        # self.gainpatchlabels,self.losspatchlabels,self.perpatchlabels = gainpatchlabels,losspatchlabels,perpatchlabels
+        # self.prepatchlabelst0, self.prepatchlabelst1, self.upatch = prepatchlabelst0,prepatchlabelst1,upatch
         self.label_patches()
     
         
     def label_patches(self):
-        _, self.gainpatchlabels = cv2.connectedComponents(self.gain, connectivity=self.connectivity)
-        _, self.losspatchlabels = cv2.connectedComponents(self.loss, connectivity=self.connectivity)
-        _, self.perpatchlabels = cv2.connectedComponents(self.persmap, connectivity=self.connectivity)
-        _, self.prepatchlabelst0 = cv2.connectedComponents(self.binaryclass[0], connectivity=self.connectivity)
-        _, self.prepatchlabelst1 = cv2.connectedComponents(self.binaryclass[1], connectivity=self.connectivity)
-        _, self.upatch = cv2.connectedComponents((self.datacrosst > 1).astype('uint8'), connectivity=self.connectivity)
-        
-        
-        absencet0 = (1 - self.binaryclass[0]).astype('uint8')
-        _, abslabelt0 = cv2.connectedComponents(absencet0, connectivity=self.connectivity)
+        gain,loss,persmap,absmap = self.gain,self.loss,self.persmap,self.absmap
+        binaryclass,datacrosst = self.binaryclass,self.datacrosst
+        if(self.connectivity == 8):
+            structure = np.ones((3,3)).astype('ubyte')
+        elif(self.connectivity == 4):
+            structure = np.ones((3,3)).astype('ubyte')
+            structure[0,0] = 0
+            structure[2,0] = 0
+            structure[0,2] = 0
+            structure[2,2] = 0
+        gainpatchlabels, _ = ndmeasure.label(gain, structure = structure) 
+        losspatchlabels, _ = ndmeasure.label(loss, structure = structure) 
+        perpatchlabels, _ = ndmeasure.label(persmap, structure = structure) 
+        prepatchlabelst0, _ = ndmeasure.label(binaryclass[0], structure = structure) 
+        prepatchlabelst1, _ = ndmeasure.label(binaryclass[1], structure = structure) 
+        upatch, _ = ndmeasure.label((datacrosst>1).astype('uint8'), structure = structure) 
 
-        absencet1 = (1 - self.binaryclass[1]).astype('uint8')
-        _, abslabelt1 = cv2.connectedComponents(absencet1, connectivity=self.connectivity)
+        
+        absencet0 = (1 - binaryclass[0]).astype('uint8')
+        abslabelt0,_ = ndmeasure.label(absencet0, structure = structure) 
+
+        absencet1 = (1 - binaryclass[1]).astype('uint8')
+        abslabelt1,_ = ndmeasure.label(absencet1, structure = structure) 
 
         self.abslabelt0 = abslabelt0
         self.abslabelt1 = abslabelt1
+
+        self.gainpatchlabels,self.losspatchlabels,self.perpatchlabels = gainpatchlabels,losspatchlabels,perpatchlabels
+        self.prepatchlabelst0, self.prepatchlabelst1, self.upatch = prepatchlabelst0,prepatchlabelst1,upatch
+        
+
         return abslabelt0, abslabelt1
 
     def dilate(self, patch):

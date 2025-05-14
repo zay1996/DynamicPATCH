@@ -7,6 +7,7 @@ maps and graphics, the main function mainly calls this script to get the ouputs
 
 @author: Aiyin Zhang
 """
+
 import numpy as np
 import os
 import pandas as pd
@@ -15,7 +16,7 @@ import matplotlib.pyplot as plt
 #import identify_dypatch
 from dynamicpatch import TransitionAnalysis,config,WriteData
 import glob
-
+import dask.array as da 
 
 #%% 
 def initialize(params,data_val):
@@ -38,9 +39,18 @@ def initialize(params,data_val):
         map_figs.append(map_fig)
     return map_figs, binary_t
 
+def reclass(input_,pres_val,nodata_val,chunking = None):
+    
+    reclassed = da.full_like(input_, fill_value=1, dtype="ubyte")
+
+    # Apply conditions using Dask's `where()` (NumPy-compatible)
+    reclassed = da.where(input_ == pres_val, 2, reclassed)  # Set 2 where combined_data == 3
+    reclassed = da.where(input_ == nodata_val, 0, reclassed)  # Set 0 where combined_data == 0
+    
+
+    return reclassed
 
 def run_analysis(params,
-                 data,
                  data_val,
                  mapshow = True, 
                  chartsshow = True,
@@ -49,7 +59,8 @@ def run_analysis(params,
                  progress = None, 
                  width = 0.35, 
                  log_scale = True,
-                 rotation = 0):           
+                 rotation = 0,
+                 chunk_size = 1000):           
     is_complete = False
 
     workpath, year, connectivity, targ_pre, in_nodata, FileType, dataset,study_area = \
@@ -74,12 +85,9 @@ def run_analysis(params,
 
 
     for i in range(nt):
+        chunking = (nt, chunk_size,chunk_size)
+        binary = reclass(data_val[i:i+2].data, presence, nodata, chunking = chunking)
         
-        binary = np.zeros((2,nl,ns),dtype = 'ubyte')
-
-        binary[data_val[i:i+2,:,:] == targ_pre] = presence
-        binary[data_val[i:i+2,:,:] != targ_pre] = absence
-        binary[data_val[i:i+2,:,:] == in_nodata] = nodata
             
         analysis[i] = TransitionAnalysis.TransitionAnalysis(proc_params, binary[0], binary[1], year)
         pattern[i] = analysis[i].identify()
@@ -89,7 +97,7 @@ def run_analysis(params,
         from dynamicpatch import create_maps
         map_title = f'Transition Pattern at {study_area}'
         for i in range(nt):
-            pattern_map = create_maps.pattern_map(year,i,pattern,data,res)  
+            pattern_map = create_maps.pattern_map(year,i,pattern,res = res)  
             pattern_maps.append(pattern_map)
             
     if export_map is True:                     
@@ -102,9 +110,9 @@ def run_analysis(params,
     
         # Create the full path to the file
         FileName = output_dir + dataset + '_trans_type.tif'
-        print(FileName,data,pattern)
+        print(FileName,pattern)
         # Call the function with the new FileName
-        WriteData.writedata(FileName, pattern, data, 'byte')
+        WriteData.writedata_rio(FileName, pattern)
         
     if chartsshow is True: 
         from dynamicpatch import create_charts
@@ -123,7 +131,7 @@ def run_analysis(params,
         chart_titles.extend([title1,title2,title3,title4])
     
     is_complete = True 
-    outputs = df_inde_all,data,data_val,binary
+    outputs = df_inde_all,data_val,binary
     result = pattern, pattern_maps, map_title, generated_charts, chart_titles, outputs
     return result
 

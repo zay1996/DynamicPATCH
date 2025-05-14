@@ -7,7 +7,7 @@ Created on Sun Jun  9 14:09:22 2024
 
 
 
-
+#%%
 
 import matplotlib.colors as colors
 import matplotlib.pyplot as plt
@@ -18,9 +18,10 @@ import numpy as np
 
 
 from dynamicpatch import main
+#%%
 ## specify the parameters 
 result_exp = main.run_dynamicpatch(
-        workpath = "D:/OneDrive - Clark University/Desktop/Research/patchmanuscript/inputs/examplev4.xlsx",
+        workpath = "C:/OneDrive - Clark University/Desktop/Research/patchmanuscript/inputs/examplev4.xlsx",
         year = [0,
                 1
     ],

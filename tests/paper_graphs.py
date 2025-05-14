@@ -6,7 +6,7 @@ Created on Tue Jun 25 16:02:02 2024
 """
 
 #%%
-from osgeo import gdal
+#from osgeo import gdal
 import numpy as np
 import os
 import pandas as pd
@@ -16,15 +16,23 @@ import glob
 
 #%% pond 
 from dynamicpatch import main
+from dynamicpatch import read_data
+from dynamicpatch import config_new
+from dynamicpatch import create_maps
+import importlib
+importlib.reload(main)
+importlib.reload(config_new)
+importlib.reload(read_data)
+importlib.reload(create_maps)
 ## specify the parameters 
-result_pond = main.run_dynamicpatch(
+result_pond,pond_params = main.run_dynamicpatch(
         workpath = os.path.dirname(os.path.dirname(os.getcwd())) + '/inputs/pondbinary.tif',
         year = [
         1938,
         1971,
         2013
     ],
-        in_nodata = -1,
+        in_nodata = 255,
         connectivity = 8,
         targ_pre = 1,
         study_area = None,
@@ -36,20 +44,21 @@ result_pond = main.run_dynamicpatch(
         width = 0.35
     )
 
+
 pondpattern, _, _, _, _, pond_outputs = result_pond 
 df_inde_all_pond,data_pond,dataval_pond, binary_pond = pond_outputs
 
 #%% marsh
 ## specify the parameters 
 from dynamicpatch import main
-result_marsh = main.run_dynamicpatch(
+result_marsh,marsh_params = main.run_dynamicpatch(
         workpath = os.path.dirname(os.path.dirname(os.getcwd())) + '/inputs/marshbinary.tif',
         year = [
         1938,
         1971,
         2013
     ],
-        in_nodata = -1,
+        in_nodata = 255,
         connectivity = 8,
         targ_pre = 1,
         study_area = None,
@@ -63,8 +72,24 @@ result_marsh = main.run_dynamicpatch(
 
 marshpattern, _, _, _, _, marsh_outputs = result_marsh 
 df_inde_all_marsh,data_marsh,dataval_marsh, binary_marsh = marsh_outputs
-    
+
+#%%
+params = pond_params
+workpath, year, connectivity, targ_pre, in_nodata, FileType, dataset,study_area = \
+    params['workpath'], params['years'],params['connectivity'],params['presence'], params['nodata'],\
+        params['FileType'], params['dataset'],params['study_area']
+
+nt,nl,ns = params['nt'],params['nl'],params['ns']
+
+res = params['res']
+
+presence,absence,nodata = params['proc_presence'],params['proc_absence'],params['proc_nodata']
+
+proc_params = absence, presence, nodata, nt, nl, ns, connectivity  
+
+
 #%% Create study area map 
+importlib.reload(read_data)
 filepath = 'D:\\OneDrive - Clark University\\Desktop\\Research\\patchmanuscript\\graphs\\'
 
 import matplotlib.colors as colors
@@ -82,7 +107,7 @@ gs = fig.add_gridspec(nrows = nrow_, ncols = ncol_, height_ratios=[1.5], width_r
 from dynamicpatch import read_data
 filedir = 'D:\\CLASS\\GEOG 379\\ponds\\HR\\'
 FilePathl = [filedir+'LC1938.tif',filedir+'LC1972.tif',filedir+'LC2013.tif']
-data, dataar,size = read_data.readdatafunc('Tif', FilePathl)
+data, dataar,size = read_data.readdatafunc('Folder', FilePathl)
 nl,ns = size
 pie = np.zeros((3,nl,ns)).astype('byte')
 pie[0:2][dataar[0:2] == 1] =1 # 1 = pond
@@ -347,8 +372,8 @@ filepath =  os.path.dirname(os.path.dirname(os.getcwd()))
 
 from dynamicpatch import create_charts 
 importlib.reload(create_charts)  
-show_charts_pond = create_charts.Gen_Charts(pondpattern)
-show_charts_marsh = create_charts.Gen_Charts(marshpattern)
+show_charts_pond = create_charts.Gen_Charts(pondpattern, year, connectivity, nt, res)
+show_charts_marsh = create_charts.Gen_Charts(marshpattern,year,connectivity,nt,res)
 
 # Create a new figure with specified size and gridspec for layout control
 fig, axes = plt.subplots(2, 2, figsize=(26, 12))
@@ -376,7 +401,7 @@ axes[0,1].text(0.5, 1.1, 'Pond', fontsize=30, va='top', ha='center', transform=a
 
 # Adjust layout and save the figure
 fig.tight_layout()
-plt.savefig(filepath + '/graphs/pondmarsh'+'stackedbarBF1.png', format='png',dpi = 600)  # Save the combined plot as PNG
+plt.savefig(filepath + '/graphs/pondmarsh'+'stackedbarBF2.png', format='png',dpi = 600)  # Save the combined plot as PNG
 plt.show()
 
     
@@ -410,16 +435,16 @@ df_patch_size_pond.to_csv(filepath + 'pondarea.csv')
 #%% bar charts 
 from dynamicpatch import create_charts
 importlib.reload(create_charts)  
-show_charts_pond = create_charts.Gen_Charts(pondpattern)
-show_charts_marsh = create_charts.Gen_Charts(marshpattern)
+show_charts_pond = create_charts.Gen_Charts(pondpattern, year, connectivity, nt, res)
+show_charts_marsh = create_charts.Gen_Charts(marshpattern,year,connectivity,nt,res)
 
 
 fig, axes = plt.subplots(2, 2, figsize=(26, 16))
 
-fig1 = show_charts_pond.plot_num(ax = axes[0,0])
-fig2 = show_charts_pond.plot_ave_size(ax = axes[1,0])
-fig3 = show_charts_marsh.plot_num(ax = axes[0,1])
-fig4 = show_charts_marsh.plot_ave_size(ax = axes[1,1])
+fig1 = show_charts_marsh.plot_num(ax = axes[0,0])
+fig2 = show_charts_marsh.plot_ave_size(ax = axes[1,0])
+fig3 = show_charts_pond.plot_num(ax = axes[0,1])
+fig4 = show_charts_pond.plot_ave_size(ax = axes[1,1])
 
 axes[0,0].set_title('(a)', loc='left', fontsize=20, weight='bold')  # Label (b) on the top left of ax2
 axes[0,1].set_title('(b)', loc='left', fontsize=20,weight='bold')  # Label (b) on the top left of ax2
@@ -432,7 +457,7 @@ axes[0,1].text(0.5, 1.1, 'Pond', fontsize=30, va='top', ha='center', transform=a
 ## to do: revise map, make bar chart (add mean), update stacked bar. make table, make a line chart showing net change 
 
 plt.tight_layout()
-plt.savefig(filepath + '/graphs/pondmarsh'+'statsbarBF.png', format='png',dpi = 600)  # Save the combined plot as PNG
+plt.savefig(filepath + '/graphs/pondmarsh'+'statsbarBF1.png', format='png',dpi = 600)  # Save the combined plot as PNG
 plt.show()
 
 

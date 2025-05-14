@@ -5,7 +5,6 @@ Created on Thu Aug 22 21:33:38 2024
 @author: aiiyi
 """
 
-from osgeo import gdal
 import numpy as np
 
     
@@ -42,3 +41,11 @@ def writedata(FileName,image,data1,type_):
     if(image.ndim==2):
         outData.GetRasterBand(1).WriteArray(image)
     outData.FlushCache()
+
+
+def writedata_rio(FileName,image,tile_flag = False, window_flag = False):
+    image.rio.to_raster(FileName,
+                        tile = tile_flag,
+                        windowed = window_flag,
+                        blockxsize = 10000,
+                        blockysize = 10000)

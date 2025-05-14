@@ -15,7 +15,7 @@ main.run_dynamicpatch(
         workpath = package_dir + '/static/example.xlsx',
         year = [0,
                 1
-    ],
+        ],
         in_nodata = -1, # optional, default = 0
         connectivity = 8, # optional, default = 8
         targ_pre = 1, # optional, default = 1
@@ -29,3 +29,5 @@ main.run_dynamicpatch(
     )
 
 
+
+# %%
