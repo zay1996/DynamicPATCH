@@ -68,6 +68,7 @@ def run_dynamicpatch(
     
     params, data, data_val = config_new.read_params\
         (workpath, year,targ_pre, connectivity,in_nodata, study_area)
+    print("data loaded")
     from dynamicpatch import processing        
     importlib.reload(processing)  
     processing.initialize(params,data_val)

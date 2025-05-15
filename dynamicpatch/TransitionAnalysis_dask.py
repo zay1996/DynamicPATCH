@@ -92,6 +92,7 @@ class TransitionAnalysis:
             structure[0,2] = 0
             structure[2,2] = 0
         gainpatchlabels, _ = ndmeasure.label(gain, structure = structure) 
+        #skimage.measure.label(gain,connectivity = 2)
         losspatchlabels, _ = ndmeasure.label(loss, structure = structure) 
         perpatchlabels, _ = ndmeasure.label(persmap, structure = structure) 
         prepatchlabelst0, _ = ndmeasure.label(binaryclass[0], structure = structure) 
@@ -146,8 +147,8 @@ class TransitionAnalysis:
         ex_abs_labelt1 = self.abslabelt1 * (np.isin(self.abslabelt1, ind_ext_abs_t1))
 
         
-        lossbi = self.loss.astype(int)
-        gainbi = self.gain.astype(int)
+        lossbi = self.loss
+        gainbi = self.gain
         
     
         dilated_loss = self.dilate(lossbi)

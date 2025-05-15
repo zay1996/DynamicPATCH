@@ -8,6 +8,13 @@ from dynamicpatch import config_new
 
 importlib.reload(config_new)
 
+#%%
+from dask.distributed import Client, LocalCluster
+# Option: 8 workers with 2 threads each (each worker ~6.25GB if 50GB total)
+cluster = LocalCluster(n_workers=2, threads_per_worker=2, processes=True)
+client = Client(cluster)
+client
+
 #%% test 
 from dynamicpatch import config_new, read_data
 importlib.reload(config_new)
@@ -16,7 +23,7 @@ path = 'C:\\OneDrive - Clark University\\'
 datapath = path + 'Desktop\\Research\\PIE\\RefMapComp\\'
 file_name = 'PIE_classall_RF_3.tif'
 workpath = datapath + file_name
-targ_pre = 2
+targ_pre = 1
 in_nodata = 0
 year = [2010, 2012, 2014, 2016, 2018, 2021]
 type_ = 'raster'
@@ -25,6 +32,35 @@ weight = False # only supported for tabular data
 chunk_size = 1000
 connectivity = 8
 study_area = None
+map_show = True
+export_map = False
+width = 0.35
+rotation = 45
+log_scale = True
+
+#%% test atlantic forest
+from dynamicpatch import config_new, read_data
+importlib.reload(config_new)
+importlib.reload(read_data)
+import numpy as np 
+targ_pre = 3
+in_nodata = 0
+chunk_size = 1000
+years = np.arange(1985,2022,1).astype(str)
+weight = False 
+annual = True
+areaunit = 'km2'
+workpath =  "E:/atlanticforest/raw"
+type_ = 'raster'
+chunk_size = 1000
+connectivity = 8
+study_area = None
+map_show = True
+export_map = False
+width = 0.35
+rotation = 45
+log_scale = True
+
 
 #%%
 
@@ -95,7 +131,7 @@ def run_dynamicpatch(
                                      data_val,
                                      mapshow = map_show, 
                                      chartsshow = chart_show, 
-                                     unit = unit, 
+                                     unit = areaunit, 
                                      export_map = export_map, 
                                      width = width, 
                                      log_scale = log_scale,

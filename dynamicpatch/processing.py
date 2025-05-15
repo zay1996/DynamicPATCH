@@ -74,7 +74,7 @@ def run_analysis(params,
 
 
     for i in range(nt):
-        
+        print("Running Transition Analysis on time interval",i)    
         binary = np.zeros((2,nl,ns),dtype = 'ubyte')
 
         binary[data_val[i:i+2,:,:] == targ_pre] = presence

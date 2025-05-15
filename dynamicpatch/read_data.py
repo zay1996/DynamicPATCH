@@ -92,7 +92,7 @@ def readdatafunc(FileType, FilePath):
             datasets = []
             for i,f in enumerate(tif_files):
                 with rasterio.open(f) as src:
-                    data = src.read()  # shape: (bands, height, width)
+                    data = src.read()[0]  # shape: (bands, height, width)
                     datasets.append(data)
 
             # Check shape consistency

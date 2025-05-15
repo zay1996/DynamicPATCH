@@ -74,7 +74,7 @@ def run_analysis(params,
     res = params['res']
 
     proc_params = absence, presence, nodata, nt, nl, ns, connectivity  
-    pattern = np.zeros((nt,nl,ns),dtype = 'int')
+    pattern = da.zeros((nt,nl,ns),dtype = 'int')
     
     pattern_maps = []
     generated_charts = []
