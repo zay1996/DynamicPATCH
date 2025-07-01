@@ -10,7 +10,7 @@ import tkinter as tk
 from tkinter import Tk
 import pandas as pd 
 from dynamicpatch import read_data 
-
+from rasterio.warp import calculate_default_transform
 
 cat_list=['No Data','Stable Absence','Appearing','Merging','Filling','Expanding',\
           'Disappearing','Splitting','Perforating','Contracting','Stable Presence']
@@ -46,7 +46,7 @@ in_nodata = 0
 connectivity = 0
 year = []
 filetype = ""
-res = 0
+#res = 0
 nt = 0
 study_area = ""
 dataset = ""
@@ -109,7 +109,7 @@ def read_params_interface():
     return proc_params, data, data_val
     
 
-def read_params(workpath,year,targ_pre = 1, connectivity = 8, in_nodata = 0, study_area = None):
+def read_params(workpath,year,targ_pre = 1, connectivity = 8, in_nodata = 0, study_area = None,res = None):
     '''
     Read parameters option 1: specifying dataset 
     
@@ -141,8 +141,14 @@ def read_params(workpath,year,targ_pre = 1, connectivity = 8, in_nodata = 0, stu
     ### READ ALL TIF FILES UNDER WORKPATH 
     if (filetype == 'Tif' or filetype == 'Folder'):
         src, data_val,size = read_data.readdatafunc(filetype, workpath)
-        res = src.res[0]
         data = src
+        if (res is None):
+            dst_crs = 'EPSG:3857'  # or choose a suitable CRS in meters
+            transform, width, height = calculate_default_transform(
+                src.crs, dst_crs, src.width, src.height, *src.bounds
+            )
+
+            res = transform.a  # pixel width in meters
     else:
         data_val,size = read_data.readdatafunc(filetype,workpath)
         res = 0
@@ -175,7 +181,7 @@ def read_params(workpath,year,targ_pre = 1, connectivity = 8, in_nodata = 0, stu
  
     return params, data, data_val 
 
-def read_params_dask(workpath,year,targ_pre = 1, connectivity = 8, in_nodata = 0, study_area = None):
+def read_params_dask(workpath,year,targ_pre = 1, connectivity = 8, in_nodata = 0, study_area = None,chunk_size = 5000):
     '''
     Read parameters option 1: specifying dataset 
     
@@ -202,10 +208,10 @@ def read_params_dask(workpath,year,targ_pre = 1, connectivity = 8, in_nodata = 0
 
     ### READ ALL TIF FILES UNDER WORKPATH 
     if (filetype == 'Tif' or filetype == 'Folder'):
-        data_val,size = read_data.readdatafunc_new(filetype, workpath)
+        data_val,size = read_data.readdatafunc_new(filetype, workpath,chunk_size = chunk_size)
         res = data_val.rio.resolution()
     else:
-        data_val,size = read_data.readdatafunc_new(filetype,workpath)
+        data_val,size = read_data.readdatafunc_new(filetype,workpath,chunk_size = chunk_size)
         res = 0
         data = None
 

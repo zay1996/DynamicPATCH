@@ -23,7 +23,8 @@ def run_dynamicpatch(
         log_scale = True, 
         export_map = False,
         width = 0.35,
-        rotation = 45):
+        rotation = 45,
+        res = None):
     '''
     Run dynamic patch analysis in commandline 
     
@@ -67,7 +68,7 @@ def run_dynamicpatch(
     
     
     params, data, data_val = config_new.read_params\
-        (workpath, year,targ_pre, connectivity,in_nodata, study_area)
+        (workpath, year,targ_pre, connectivity,in_nodata, study_area,res)
     print("data loaded")
     from dynamicpatch import processing        
     importlib.reload(processing)  

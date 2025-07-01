@@ -150,7 +150,7 @@ def pattern_map(year,tp,pattern,data=None, res=None, ax = None,frame = 'off', no
 
     
     if data is not None:
-        im = ax.imshow(pattern[tp], interpolation='none', cmap=cmap, norm=norm,extent = extent)
+        im = ax.imshow(pattern[tp], interpolation='none', cmap=cmap, norm=norm) # delete extent = extent because this messed up the scale bar 
     
     if data is None:
         im = ax.imshow(pattern[tp], interpolation='none', cmap=cmap, norm=norm)
@@ -174,6 +174,7 @@ def pattern_map(year,tp,pattern,data=None, res=None, ax = None,frame = 'off', no
         ax.legend(handles=patches, bbox_to_anchor=(1.01, 1), loc=2, borderaxespad=0.)
     
     if res is not None:
+        print("res map = ",res)
         font_prop = {'size':20}
         scalebar = ScaleBar(res, location='lower right',font_properties=font_prop)  # 1 pixel = 2 meter
         ax.add_artist(scalebar)
