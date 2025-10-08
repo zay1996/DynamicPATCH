@@ -70,8 +70,8 @@ class Gen_Charts:
         print(f"areaunit = {self.areaunit},size_map = {size_map},res = {res}")
         self.type_ = type_
         
-        self.countnumsize()
-            
+        self.df_patch_num,self.df_patch_size, self.patch_ave, self.patch_median = self.countnumsize()
+
     def countnumsize(self):
         '''
         Compute general stats of transition patches - total area, median, average size, first 
@@ -155,7 +155,7 @@ class Gen_Charts:
        
 
 
-    def plot_ave_size(self,width = 0.35, ax = None,log_scale=True):
+    def plot_ave_size(self,width = None, ax = None,log_scale=True):
         '''
         Plot size distribution of transition patches. Include median, average, and IQR.
     
@@ -197,8 +197,8 @@ class Gen_Charts:
         # Calculate asymmetrical error
         
         iter_val = len(self.year[0:-1])
-        
-        width = 0.55 - self.nt*0.1
+        if(width is None):
+            width = 0.55 - self.nt*0.1
     
         for y in range(iter_val):
             q1 = self.patch_ave_q1.iloc[y,2:]
@@ -247,11 +247,11 @@ class Gen_Charts:
         if flag_ax is False:
             #plt.show()   
             fig.tight_layout()
-            return fig, title
+            return self.patch_median,fig, title
         else:
-            return ax
+            return self.patch_median,ax
 
-    def plot_num(self,width = 0.35, ax = None):
+    def plot_num(self,width = None, ax = None):
      
         '''
         Plot number of transition patches by each transition type    
@@ -281,8 +281,8 @@ class Gen_Charts:
         # Setting the positions and width for the bars
         x = np.arange(len(df_types.columns))  # the label locations
         #width = 0.35  # the width of the bars
-        
-        width = 0.55 - self.nt*0.1
+        if(width is None):
+            width = 0.55 - self.nt*0.1
         
         colorlist = []
         for cat in df_types.columns:
@@ -312,9 +312,9 @@ class Gen_Charts:
         # Display the plot
             #plt.show()    
             fig.tight_layout()
-            return fig,title
+            return self.df_patch_num,fig,title
         else:
-            return ax
+            return self.df_patch_num,ax
         
     def inde_table(self,df_inde):    
         '''
@@ -642,6 +642,6 @@ class Gen_Charts:
         if ax_flag is False:
             #plt.show()
             fig.tight_layout()
-            return fig,title
+            return fig,title,dfbarsize
         else:
-            return ax        
+            return ax,dfbarsize

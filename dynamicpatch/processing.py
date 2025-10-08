@@ -18,7 +18,7 @@ import glob
 
 
 #%% 
-def initialize(params,data_val):
+def initialize(params,data_val,show_map = False):
     map_figs = []
     from dynamicpatch import create_maps
     targ_pre,in_nodata = params['presence'],params['nodata']
@@ -33,9 +33,9 @@ def initialize(params,data_val):
         binary_t[data_val[i,:,:] == targ_pre] = presence
         binary_t[data_val[i,:,:] != targ_pre] = absence
         binary_t[data_val[i,:,:] == in_nodata] = nodata         
-        
-        map_fig = create_maps.map_timepoint(year,i,binary_t,absence,presence,res = res)
-        map_figs.append(map_fig)
+        if(show_map is True):
+            map_fig = create_maps.map_timepoint(year,i,binary_t,absence,presence,res = res)
+            map_figs.append(map_fig)
     return map_figs, binary_t
 
 
@@ -47,7 +47,7 @@ def run_analysis(params,
                  unit = None, 
                  export_map = False, 
                  progress = None, 
-                 width = 0.35, 
+                 width = None, 
                  log_scale = True,
                  rotation = 0):           
     is_complete = False
@@ -113,17 +113,18 @@ def run_analysis(params,
         for i in range(nt):
             df_inde_all.iloc[i,1:] = analysis[i].gross_change()
         show_charts = create_charts.Gen_Charts(pattern,year,connectivity, nt, res,areaunit = unit)
-        fig1,title1 = show_charts.plot_ave_size(width = width, log_scale = log_scale)
-        fig2,title2 = show_charts.plot_num(width = width)
+
+        df_patch_size,fig1,title1 = show_charts.plot_ave_size(width = width, log_scale = log_scale)
+        df_patch_num,fig2,title2 = show_charts.plot_num(width = width)
         
-        fig3, title3 = show_charts.gainloss_stackedbars(rotation = rotation)
+        fig3, title3,df_gainloss_all = show_charts.gainloss_stackedbars(rotation = rotation)
         fig4, title4 = show_charts.inde_stackedbars(df_inde_all,rotation = rotation)
         
         generated_charts.extend([fig1, fig2, fig3, fig4])
         chart_titles.extend([title1,title2,title3,title4])
     
     is_complete = True 
-    outputs = df_inde_all,data,data_val,binary
+    outputs = df_inde_all,df_gainloss_all,df_patch_size,df_patch_num,data,data_val,binary
     result = pattern, pattern_maps, map_title, generated_charts, chart_titles, outputs
     return result
 

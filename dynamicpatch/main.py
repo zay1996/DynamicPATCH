@@ -22,7 +22,7 @@ def run_dynamicpatch(
         unit = None, # let program decide automatically
         log_scale = True, 
         export_map = False,
-        width = 0.35,
+        width = None,
         rotation = 45,
         res = None):
     '''

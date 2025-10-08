@@ -32,10 +32,10 @@ class TransitionAnalysis:
     def setup_data(self):
         self.datacrosst = np.zeros((self.nl, self.ns), dtype='byte')
         for i in range(len(self.year)):
-            self.datacrosst[(self.binaryclass[0] == 0) & (self.binaryclass[1] == 0)] = 1
-            self.datacrosst[(self.binaryclass[0] == 1) & (self.binaryclass[1] == 1)] = 2
-            self.datacrosst[(self.binaryclass[0] == 0) & (self.binaryclass[1] == 1)] = 3
-            self.datacrosst[(self.binaryclass[0] == 1) & (self.binaryclass[1] == 0)] = 4
+            self.datacrosst[(self.classt0  == 1) & (self.classt1 == 1)] = 1
+            self.datacrosst[(self.classt0  == 2) & (self.classt1 == 2)] = 2
+            self.datacrosst[(self.classt0  == 1) & (self.classt1== 2)] = 3
+            self.datacrosst[(self.classt0  == 2) & (self.classt1 == 1)] = 4
 
         self.gain = np.zeros((self.nl, self.ns), dtype='uint8')
         self.gain[(self.datacrosst == 3)] = 1
