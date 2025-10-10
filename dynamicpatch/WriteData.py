@@ -49,3 +49,15 @@ def writedata_rio(FileName,image,tile_flag = False, window_flag = False):
                         windowed = window_flag,
                         blockxsize = 10000,
                         blockysize = 10000)
+    
+def writedata_rasterio(FileName, src,image):
+    # Copy metadata from src
+    meta = src.meta.copy()
+    meta.update({
+        "dtype": image.dtype,
+        "count": image.shape[0]  # number of bands
+    })
+
+    # Save the pattern array as a GeoTIFF
+    with rasterio.open(FileName, "w", **meta) as dst:
+        dst.write(image)

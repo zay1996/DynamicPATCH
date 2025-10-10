@@ -354,8 +354,8 @@ class MapApp(tk.Toplevel):
         var.set(not var.get())
             
     def initial_maps(self):
-        from dynamicpatch.processing import initialize
-        self.init_map_figs, _ = initialize()
+        from dynamicpatch.processing import initialize_tk
+        self.init_map_figs, _ = initialize_tk()
         #self.show_map()
 
         self.show_map('init')

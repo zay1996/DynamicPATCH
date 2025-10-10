@@ -38,6 +38,25 @@ def initialize(params,data_val,show_map = False):
             map_figs.append(map_fig)
     return map_figs, binary_t
 
+def initialize_tk():
+    map_figs = []
+    from dynamicpatch import create_maps
+    targ_pre,in_nodata = params['presence'],params['nodata']
+    presence,absence,nodata = params['proc_presence'],params['proc_absence'],params['proc_nodata']
+    res = params['res']
+    year = params['years']
+    nl = params['nl']
+    ns = params['ns']
+    for i in range(len(year)):
+        
+        binary_t = np.zeros((nl,ns),dtype = 'ubyte')
+        binary_t[data_val[i,:,:] == targ_pre] = presence
+        binary_t[data_val[i,:,:] != targ_pre] = absence
+        binary_t[data_val[i,:,:] == in_nodata] = nodata         
+
+        map_fig = create_maps.map_timepoint(year,i,binary_t,absence,presence,res = res)
+        map_figs.append(map_fig)
+    return map_figs, binary_t
 
 def run_analysis(params,
                  data,
@@ -89,7 +108,7 @@ def run_analysis(params,
         from dynamicpatch import create_maps
         map_title = f'Transition Pattern at {study_area}'
         for i in range(nt):
-            pattern_map = create_maps.pattern_map(year,i,pattern,data,res)  
+            pattern_map = create_maps.pattern_map(year,i,pattern,res = res)  
             pattern_maps.append(pattern_map)
             
     if export_map is True:                     
@@ -104,7 +123,7 @@ def run_analysis(params,
         FileName = output_dir + dataset + '_trans_type.tif'
         print(FileName,data,pattern)
         # Call the function with the new FileName
-        WriteData.writedata(FileName, pattern, data, 'byte')
+        WriteData.writedata_rasterio(FileName, data,pattern)
         
     if chartsshow is True: 
         from dynamicpatch import create_charts

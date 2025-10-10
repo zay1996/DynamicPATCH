@@ -87,11 +87,18 @@ def read_params_interface():
     filetype = in_params['FileType']
     dataset = in_params['dataset']
     study_area = in_params['study_area']
+    #res = in_params['res']
     
     ### READ ALL TIF FILES UNDER WORKPATH 
     if (filetype == 'Tif' or filetype == 'Folder'):
-        data, data_val,size = read_data.readdatafunc(filetype, workpath)
-        res = round(data.GetGeoTransform()[1])
+        src, data_val,size = read_data.readdatafunc(filetype, workpath)
+        data = src
+        dst_crs = 'EPSG:3857'  # or choose a suitable CRS in meters
+        transform, width, height = calculate_default_transform(
+            src.crs, dst_crs, src.width, src.height, *src.bounds
+        )
+
+        res = transform.a  # pixel width in meters
     else:
         data_val,size = read_data.readdatafunc(filetype,workpath)
         
