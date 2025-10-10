@@ -8,15 +8,11 @@ Dynamic PAtch Transition CHaracterization in explicit space (DynamicPATCH) is a 
 ### Preparation
 Before installing the package. Make sure you have Python (3.10 and or above) and pip installed. 
 
-While installing DynamicPATCH will install most of the dependencies, the gdal package need to be installed separately. We recommend installing gdal using conda through the conda-forge channel with the following command:
-```
-conda install -c conda-forge gdal
-```
 
 ### Install DynamicPATCH
 Install the package using the following command:
 ```
-pip install git+https://github.com/zay1996/DynamicPATCHdev.git
+pip install git+https://github.com/zay1996/DynamicPATCH.git@developer-branch
 ```
 
 
@@ -45,13 +41,16 @@ Click on `Run Analysis` and wait until the analysis finishes. The results will b
 The interface option offers a simple and straightforward way to run DynamicPATCH. However, calling the functions yourself in a Python script or using a command-line interface offers greater flexibility. The script 'test-command.py` gives an example of running DynamicPATCH in a script:
 
 ```
+import os
+import dynamicpatch 
 from dynamicpatch import main
+package_dir = os.path.dirname(os.path.abspath(dynamicpatch.__file__)) # find directory of the package    
 ## specify the parameters 
 main.run_dynamicpatch(
-        workpath = "DynamicPATCH/exampledata/example.xlsx",
+        workpath = package_dir + '/static/example.xlsx',
         year = [0,
                 1
-    ],
+        ],
         in_nodata = -1, # optional, default = 0
         connectivity = 8, # optional, default = 8
         targ_pre = 1, # optional, default = 1
@@ -63,10 +62,11 @@ main.run_dynamicpatch(
         export_map = False, # optional, default = True
         width = 0.35 # optional, default = 0.35
     )
-```
+
 
 Note: due to an issue with the current version. Please restart the kernel when changing the input dataset and parameters to avoid errors. 
 
 
 ## Citation
-Please cite our upcoming publication if you are using DynamicPATCH for your research. 
+Zhang, A., Pontius Jr, R. G., Bilintoh, T. M., Sangermano, F., & Rogan, J. (2025). DynamicPATCH: Method and software for spatially explicit dynamic patch transition characterization. Landscape Ecology, 40(7), 132. https://doi.org/10.1007/s10980-025-02120-1
+
