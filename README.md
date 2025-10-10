@@ -63,6 +63,7 @@ main.run_dynamicpatch(
         width = 0.35 # optional, default = 0.35
     )
 
+```
 
 Note: due to an issue with the current version. Please restart the kernel when changing the input dataset and parameters to avoid errors. 
 
