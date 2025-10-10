@@ -6,7 +6,7 @@ Created on Thu Aug 22 21:33:38 2024
 """
 
 import numpy as np
-
+import rasterio 
     
 def writedata(FileName,image,data1,type_):
     nb=np.shape(image)[0]
