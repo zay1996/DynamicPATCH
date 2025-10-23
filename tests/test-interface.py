@@ -14,8 +14,11 @@ from dynamicpatch import WriteData
 import glob
 
 #%% OPTION 1: Use Interface 
+import dynamicpatch.config_new as config_new
+import importlib
+importlib.reload(config_new)
 import tkinter as tk
-from dynamicpatch.config import read_params_interface
+from dynamicpatch.config_new import read_params_interface
 from dynamicpatch.interface import MapApp
 
 proc_params, data, data_val = read_params_interface()
@@ -31,3 +34,4 @@ root.mainloop()
 
 #absence, presence, nodata, nt, nl, ns, connectivity = proc_params
       
+# %%
