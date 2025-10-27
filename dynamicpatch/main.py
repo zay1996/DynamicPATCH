@@ -19,6 +19,7 @@ def run_dynamicpatch(
         study_area = None,
         map_show = True,
         chart_show = True,
+        gif_show = False,
         unit = None, # let program decide automatically
         log_scale = True, 
         export_map = False,
@@ -81,6 +82,7 @@ def run_dynamicpatch(
                                      chartsshow = chart_show, 
                                      unit = unit, 
                                      export_map = export_map, 
+                                     gif_map = gif_show,
                                      width = width, 
                                      log_scale = log_scale,
                                      rotation = rotation

@@ -198,8 +198,11 @@ class Gen_Charts:
         
         iter_val = len(self.year[0:-1])
         if(width is None):
-            width = 0.55 - self.nt*0.1
-    
+            width = 0.7/self.nt
+            print("width is ",width, self.nt)
+        
+        elinewidth = max(0.5, 2.5 / np.sqrt(self.nt))
+        scatter_size = max(10, 150 / self.nt)
         for y in range(iter_val):
             q1 = self.patch_ave_q1.iloc[y,2:]
             q3 = self.patch_ave_q3.iloc[y,2:]
@@ -207,10 +210,11 @@ class Gen_Charts:
             yerr_upper = q3 - df_types.iloc[y]    
             bars = ax.bar(x - width*(len(df_types)/2)+y*width, df_types.iloc[y], \
                           width, yerr=[yerr_lower, yerr_upper], align = 'edge',label=self.patch_ave.year[y],\
-                              edgecolor = 'black',color = colorlist)
+                              edgecolor = 'none',color = colorlist,
+                              error_kw={'elinewidth': elinewidth, 'ecolor': 'black'})
             means = self.patch_ave.iloc[y, 2:].values
             for i, mean_val in enumerate(means):
-                ax.scatter(x[i] - width*(len(df_types)/2)+y*width + width/2, mean_val, color=colorlist[i], edgecolor = 'black',marker='o', s=30, zorder=3)
+                ax.scatter(x[i] - width*(len(df_types)/2)+y*width + width/2, mean_val, color=colorlist[i], edgecolor = 'none',marker='o', s=scatter_size, zorder=3)
             
     
             
@@ -282,7 +286,8 @@ class Gen_Charts:
         x = np.arange(len(df_types.columns))  # the label locations
         #width = 0.35  # the width of the bars
         if(width is None):
-            width = 0.55 - self.nt*0.1
+            width = 0.7/self.nt
+            print("width is ",width, self.nt)
         
         colorlist = []
         for cat in df_types.columns:
@@ -296,7 +301,7 @@ class Gen_Charts:
         for y in range(len(iter_var)):
             bars = ax.bar(x - width*(len(df_types)/2)+y*width, df_types.iloc[y], \
                           width, align = 'edge',label=self.df_patch_num.year[y],\
-                              edgecolor = 'white',color = colorlist)
+                              edgecolor = 'none',color = colorlist)
         
         # Adding some text for labels, title and custom x-axis tick labels, etc.
         ax.set_xlabel('Transition Types',fontsize = 20)
@@ -426,7 +431,14 @@ class Gen_Charts:
         #legendlist = ['Disappearance','Split','Appearance','Coalescence']
         legendlist = df_indey.columns[1:]
         
+        if self.nt < 30:
+            xlabel_size = 18
+        elif self.nt < 60:
+            xlabel_size = 14
+        else:
+            xlabel_size = 10
         
+        print("xlabelsize",xlabel_size,self.nt)
         p=[]
         if(self.type_ == 'change'):
             for i in range(4):
@@ -434,10 +446,19 @@ class Gen_Charts:
                 p.append(ax.bar(df_indey['year'],df_indey.iloc[:,i+1],width=width,bottom=bargheight.iloc[:,i+1], color = colorlist[i], align='edge', label = legendlist[i]))
             ax.set_xlabel('Time Interval',fontsize=20)
             print(xlabels)
-            ax.set_xticks(np.array(year).astype(int))  # Set the positions of the ticks
-            ax.set_xticklabels(xlabels,rotation = rotation)         # Set the labels for the ticks  
+            if(self.nt <= 30):
+                ax.set_xticks(np.array(year).astype(int))  # Set the positions of the ticks
+                ax.set_xticklabels(xlabels,rotation = rotation)         # Set the labels for the ticks  
+            elif(self.nt>30):
+                step = max(1,self.nt//15)
+                tick_positions = np.array(year).astype(int)[::step]
+                tick_labels = np.array(xlabels)[::step]
+                ax.set_xticks(tick_positions)
+                
+                ax.set_xticklabels(tick_labels,rotation = rotation)         # Set the labels for the ticks                  
             ax.set_ylabel('Annual decrease and increase \n (number of patches)',fontsize=20)
             ax.tick_params(axis='both', which='major', labelsize=18)
+            ax.tick_params(axis='x', labelsize=xlabel_size)
         if(self.type_ == 'compare'):    
             for i in range(4):
                 #print(i+1,df_indey.iloc[:,i+1],width,bargheight.iloc[:,i+1],colorlist[i])
@@ -585,7 +606,14 @@ class Gen_Charts:
         dfgainbottom = dfbarsize.iloc[:,1:int(n/2)+1].cumsum(axis=1)
         dfgainbottom.insert(0, "0", np.zeros(nt))
         dflossbottom.insert(0,"0",np.zeros(nt))
-        
+
+        if self.nt < 30:
+            xlabel_size = 18
+        elif self.nt < 60:
+            xlabel_size = 14
+        else:
+            xlabel_size = 10
+
     
         p=[]
         
@@ -598,9 +626,20 @@ class Gen_Charts:
                     p.append(ax.bar(dfbarsize['year'],dfbarsize.iloc[:,i+1],width=width,bottom=dflossbottom.iloc[:,i-int(n/2)], color = colorlist[i], align='edge', label = legendlist[i]))
             ax.set_xlabel('Time Interval',fontsize=20)
 
-            ax.set_xticks(np.array(year).astype(int))  # Set the positions of the ticks
-            ax.set_xticklabels(xlabels,rotation = rotation)         # Set the labels for the ticks
+            if(self.nt <= 30):
+                ax.set_xticks(np.array(year).astype(int))  # Set the positions of the ticks
+                ax.set_xticklabels(xlabels,rotation = rotation)         # Set the labels for the ticks  
+            elif(self.nt>30):
+                step = max(1,self.nt//15)
+
+                tick_positions = np.array(year).astype(int)[::step]
+                tick_labels = np.array(xlabels)[::step]
+                ax.set_xticks(tick_positions)
+                ax.set_xticklabels(tick_labels,rotation = rotation)         # Set the labels for the ticks  
+
             ax.tick_params(axis='both', which='major', labelsize=18)
+            ax.tick_params(axis='x', labelsize=xlabel_size)
+
         if(type_ == 'compare'):
             for i in range(len(dfbarsize.columns)-1):
                 #print(i)

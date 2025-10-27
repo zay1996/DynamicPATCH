@@ -15,9 +15,9 @@ import matplotlib.pyplot as plt
 #import identify_dypatch
 from dynamicpatch import TransitionAnalysis,config,WriteData
 import glob
-
-
-#%% 
+import math 
+import matplotlib.patches as mpatches
+from dynamicpatch.config_new import df_cat
 def initialize(params,data_val,show_map = False):
     map_figs = []
     from dynamicpatch import create_maps
@@ -64,7 +64,8 @@ def run_analysis(params,
                  mapshow = True, 
                  chartsshow = True,
                  unit = None, 
-                 export_map = False, 
+                 export_map = False,
+                 gif_map = False, 
                  progress = None, 
                  width = None, 
                  log_scale = True,
@@ -106,11 +107,76 @@ def run_analysis(params,
             
     if mapshow is True:
         from dynamicpatch import create_maps
-        map_title = f'Transition Pattern at {study_area}'
-        for i in range(nt):
-            pattern_map = create_maps.pattern_map(year,i,pattern,res = res)  
-            pattern_maps.append(pattern_map)
+        # map_title = f'Transition Pattern at {study_area}'
+        # for i in range(nt):
+        #     pattern_map = create_maps.pattern_map(year,i,pattern,res = res)  
+        #     pattern_maps.append(pattern_map)
             
+        categorylist = list(df_cat.sort_values(by='Value')['Type'])
+        colorlist = [df_cat.loc[df_cat['Type'] == cat, 'Color'].values[0] for cat in categorylist]
+
+
+        # --- 1️⃣ Dynamically determine layout ---
+        # Try to make it more landscape: more columns than rows
+        ncols = math.ceil(math.sqrt(nt))
+        nrows = math.ceil(nt / ncols)
+
+        # Optional tweak: if you want it more landscape than square
+        if ncols < nrows:
+            ncols, nrows = nrows, ncols
+
+        # --- 2️⃣ Create figure and axes ---
+        fig, axes = plt.subplots(
+            nrows=nrows, ncols=ncols,
+            figsize=(4 * ncols, 4 * nrows),
+            constrained_layout=True
+        )
+
+        # --- 3️⃣ Flatten axes for easy indexing ---
+        axes = np.array(axes).reshape(-1)
+
+        # --- 4️⃣ Plot each map ---
+        for i, ax in enumerate(axes):
+            if i < nt-1:
+                im = create_maps.pattern_map(year,i,pattern,res = res,ax = ax,north_arrow = False)  
+                ax.set_title(str(year[i]), fontsize=14, pad=8)
+                ax.axis('off')
+            if i == nt-1:
+                im = create_maps.pattern_map(year,i,pattern,res = res,ax = ax,north_arrow = True)  
+                ax.set_title(str(year[i]), fontsize=14, pad=8)
+                ax.axis('off')
+            else:
+                # Hide any extra subplot if grid > number of maps
+                ax.axis('off')
+
+        patches = [mpatches.Patch(color=colorlist[i], label=categorylist[i]) for i in range(len(categorylist))][1:]
+        fig.legend(handles=patches, loc='lower center', bbox_to_anchor=(0.5, -0.05), ncol = 6,fontsize=20)
+
+    if gif_map is True:
+        import io
+        import imageio.v2 as imageio  # <-- use v2 explicitly
+        # Loop through time steps and generate figures
+        frames = []
+        for i in range(nt-1):
+            fig = create_maps.pattern_map(year, i, pattern, data, res)
+
+            # Save the figure to a buffer instead of disk
+            # Save to buffer
+            buf = io.BytesIO()
+            fig.savefig(buf, format='png', dpi=150, bbox_inches='tight')
+            buf.seek(0)
+
+            image = imageio.imread(buf)  # <-- v2-compatible read
+            frames.append(image)
+
+            buf.close()
+            plt.close(fig)
+
+        # Save as GIF (2 seconds per frame => 0.5 FPS)
+        #imageio.mimsave('transition
+        imageio.mimsave('transition_pattern.gif', frames, fps = 1, loop = 0) 
+
+
     if export_map is True:                     
         # Prompt user for output directory
         output_dir = input("Enter output map directory (please end with / or \\): ").strip()
