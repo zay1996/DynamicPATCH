@@ -174,7 +174,7 @@ def run_analysis(params,
 
         # Save as GIF (2 seconds per frame => 0.5 FPS)
         #imageio.mimsave('transition
-        imageio.mimsave('transition_pattern.gif', frames, fps = 1, loop = 0) 
+        imageio.mimsave('transition_pattern'+study_area+'.gif', frames, fps = 1, loop = 0) 
 
 
     if export_map is True:                     

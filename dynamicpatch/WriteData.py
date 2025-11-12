@@ -55,7 +55,8 @@ def writedata_rasterio(FileName, src,image):
     meta = src.meta.copy()
     meta.update({
         "dtype": image.dtype,
-        "count": image.shape[0]  # number of bands
+        "count": image.shape[0],  # number of bands,
+        "nodata": -1 
     })
 
     # Save the pattern array as a GeoTIFF
