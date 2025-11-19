@@ -107,50 +107,53 @@ def run_analysis(params,
             
     if mapshow is True:
         from dynamicpatch import create_maps
-        # map_title = f'Transition Pattern at {study_area}'
-        # for i in range(nt):
-        #     pattern_map = create_maps.pattern_map(year,i,pattern,res = res)  
-        #     pattern_maps.append(pattern_map)
-            
         categorylist = list(df_cat.sort_values(by='Value')['Type'])
         colorlist = [df_cat.loc[df_cat['Type'] == cat, 'Color'].values[0] for cat in categorylist]
 
+        if(nt<=5):
+            map_title = f'Transition Pattern at {study_area}'
+            for i in range(nt):
+                pattern_map = create_maps.pattern_map(year,i,pattern,res = res)  
+                pattern_maps.append(pattern_map)
+            
+        if(nt > 5):
 
-        # --- 1️⃣ Dynamically determine layout ---
-        # Try to make it more landscape: more columns than rows
-        ncols = math.ceil(math.sqrt(nt))
-        nrows = math.ceil(nt / ncols)
+            # --- 1️⃣ Dynamically determine layout ---
+            # Try to make it more landscape: more columns than rows
+            ncols = math.ceil(math.sqrt(nt))
+            nrows = math.ceil(nt / ncols)
+            aspect = nl / ns
 
-        # Optional tweak: if you want it more landscape than square
-        if ncols < nrows:
-            ncols, nrows = nrows, ncols
+            subplot_width = 5    # Inches per subplot (adjustable)
+            subplot_height = subplot_width / aspect
 
-        # --- 2️⃣ Create figure and axes ---
-        fig, axes = plt.subplots(
-            nrows=nrows, ncols=ncols,
-            figsize=(4 * ncols, 4 * nrows),
-            constrained_layout=True
-        )
+            fig_width = subplot_width * ncols
+            fig_height = subplot_height * nrows + 1.5    # extra space for legend
 
-        # --- 3️⃣ Flatten axes for easy indexing ---
-        axes = np.array(axes).reshape(-1)
+            fig, axes = plt.subplots(
+                nrows=nrows,
+                ncols=ncols,
+                figsize=(fig_width, fig_height),
+                constrained_layout=True
+            )
 
-        # --- 4️⃣ Plot each map ---
-        for i, ax in enumerate(axes):
-            if i < nt-1:
-                im = create_maps.pattern_map(year,i,pattern,res = res,ax = ax,north_arrow = False)  
-                ax.set_title(str(year[i]), fontsize=14, pad=8)
-                ax.axis('off')
-            if i == nt-1:
-                im = create_maps.pattern_map(year,i,pattern,res = res,ax = ax,north_arrow = True)  
-                ax.set_title(str(year[i]), fontsize=14, pad=8)
-                ax.axis('off')
-            else:
-                # Hide any extra subplot if grid > number of maps
-                ax.axis('off')
+            print("update?")
+            axes = np.array(axes).reshape(-1)
+            for i, ax in enumerate(axes):
+                if i < nt-1:
+                    im = create_maps.pattern_map(year,i,pattern,res = res,ax = ax,north_arrow = False)  
+                    ax.set_title(str(year[i]), fontsize=14, pad=8)
+                    ax.axis('off')
+                if i == nt-1:
+                    im = create_maps.pattern_map(year,i,pattern,res = res,ax = ax,north_arrow = True)  
+                    ax.set_title(str(year[i]), fontsize=14, pad=8)
+                    ax.axis('off')
+                else:
+                    # Hide any extra subplot if grid > number of maps
+                    ax.axis('off')
 
-        patches = [mpatches.Patch(color=colorlist[i], label=categorylist[i]) for i in range(len(categorylist))][1:]
-        fig.legend(handles=patches, loc='lower center', bbox_to_anchor=(0.5, -0.05), ncol = 6,fontsize=20)
+            patches = [mpatches.Patch(color=colorlist[i], label=categorylist[i]) for i in range(len(categorylist))][1:]
+            fig.legend(handles=patches, loc='lower center', bbox_to_anchor=(0.5, -0.05), ncol = 6,fontsize=20)
 
     if gif_map is True:
         import io
