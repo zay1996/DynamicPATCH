@@ -142,11 +142,11 @@ def run_analysis(params,
             for i, ax in enumerate(axes):
                 if i < nt-1:
                     im = create_maps.pattern_map(year,i,pattern,res = res,ax = ax,north_arrow = False)  
-                    ax.set_title(str(year[i]), fontsize=14, pad=8)
+                    ax.set_title(str(year[i])+'-' +str(year[i+1]), fontsize=14, pad=8)
                     ax.axis('off')
                 if i == nt-1:
                     im = create_maps.pattern_map(year,i,pattern,res = res,ax = ax,north_arrow = True)  
-                    ax.set_title(str(year[i]), fontsize=14, pad=8)
+                    ax.set_title(str(year[i])+'-' +str(year[i+1]),fontsize=14, pad=8)
                     ax.axis('off')
                 else:
                     # Hide any extra subplot if grid > number of maps

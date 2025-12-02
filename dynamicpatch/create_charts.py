@@ -232,6 +232,8 @@ class Gen_Charts:
         ax.set_xticks(x)
         ax.set_xticklabels(df_types.columns,rotation = 45)
         ax.tick_params(axis='both', labelsize=18)
+        print("try")
+        ax.set_ylim(bottom=0)
         # Creating the legend
         from matplotlib.lines import Line2D
         from matplotlib.patches import Rectangle
@@ -312,7 +314,7 @@ class Gen_Charts:
         ax.tick_params(axis='both', labelsize=18)
         #ax.legend()
         title = 'Number of transition patch for each transition type'
-        
+        ax.set_ylim(bottom=0)
         if flag_ax is False:
         # Display the plot
             #plt.show()    
