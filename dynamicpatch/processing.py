@@ -61,6 +61,7 @@ def initialize_tk():
 def run_analysis(params,
                  data,
                  data_val,
+                 mask = None,
                  mapshow = True, 
                  chartsshow = True,
                  unit = None, 
@@ -200,7 +201,7 @@ def run_analysis(params,
         df_inde_all['year']=year[0:-1]
         for i in range(nt):
             df_inde_all.iloc[i,1:] = analysis[i].gross_change()
-        show_charts = create_charts.Gen_Charts(pattern,year,connectivity, nt, res,areaunit = unit)
+        show_charts = create_charts.Gen_Charts(pattern,year,connectivity, nt, res,mask = mask, areaunit = unit)
 
         df_patch_size,fig1,title1 = show_charts.plot_ave_size(width = width, log_scale = log_scale)
         df_patch_num,fig2,title2 = show_charts.plot_num(width = width)

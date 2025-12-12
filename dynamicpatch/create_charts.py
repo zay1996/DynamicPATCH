@@ -15,7 +15,7 @@ from dynamicpatch.config import cat_dict, df_cat
 
 
 class Gen_Charts:
-    def __init__(self, pattern, year, connectivity, nt, res, areaunit = None,type_ = 'change'):
+    def __init__(self, pattern, year, connectivity, nt, res, mask = None,areaunit = None,type_ = 'change'):
         '''
         Initialize parameters needed for creating graphics 
 
@@ -57,6 +57,7 @@ class Gen_Charts:
         self.nt = nt
         self.connectivity = connectivity
         self.res = res
+        self.mask = mask
         # automatically assign appropriate areaunit 
         size_map = len(str(np.size(pattern)*res))
         self.areaunit = areaunit
@@ -113,10 +114,17 @@ class Gen_Charts:
 
     
         for i,y in enumerate(iter_var):
+            mask = self.mask
             interval.append(str(year[i])+'-' + str(year[i+1]))
             num_patch, size_patch, ave_patch,med_patch,sem_patch,q1_patch,q3_patch = [],[],[],[],[],[],[]
             for c in df_cat['Value'][1:]:
-                tax_map = (self.pattern[i] == c).astype('uint8')
+                if(mask is None):
+                    tax_map = (self.pattern[i] == c).astype('uint8')
+                if(mask is not None):
+                    if(len(np.shape(mask)) == 2):
+                        tax_map = ((self.pattern[i] == c) & (mask == 1)).astype('uint8')
+                    if(len(np.shape(mask)) == 3):
+                        tax_map = ((self.pattern[i] == c) & (mask[i] == 1)).astype('uint8')
                 num_labels, patchlabels = cv2.connectedComponents(tax_map, connectivity=self.connectivity)
                 num_labels = num_labels - 1 # exclude background 
                 num_patch.append(num_labels)
@@ -155,7 +163,7 @@ class Gen_Charts:
        
 
 
-    def plot_ave_size(self,width = None, ax = None,log_scale=True):
+    def plot_ave_size(self,width = None, ax = None,log_scale=True,y_range = None):
         '''
         Plot size distribution of transition patches. Include median, average, and IQR.
     
@@ -234,6 +242,8 @@ class Gen_Charts:
         ax.tick_params(axis='both', labelsize=18)
         print("try")
         ax.set_ylim(bottom=0)
+        if(y_range is not None):
+            ax.set_ylim(y_range)
         # Creating the legend
         from matplotlib.lines import Line2D
         from matplotlib.patches import Rectangle
@@ -257,7 +267,7 @@ class Gen_Charts:
         else:
             return self.patch_median,ax
 
-    def plot_num(self,width = None, ax = None):
+    def plot_num(self,width = None, ax = None,y_range = None):
      
         '''
         Plot number of transition patches by each transition type    
@@ -315,6 +325,8 @@ class Gen_Charts:
         #ax.legend()
         title = 'Number of transition patch for each transition type'
         ax.set_ylim(bottom=0)
+        if(y_range is not None):
+            ax.set_ylim(y_range)
         if flag_ax is False:
         # Display the plot
             #plt.show()    
