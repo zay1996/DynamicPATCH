@@ -1,7 +1,7 @@
 
 A Python package for DynamicPATCH
 ================================================================================================
-Dynamic PAtch Transition CHaracterization in explicit space (DynamicPATCH) is a patch-based method that characterizes and quantifies eight types of mutually exclusive and collectively exaustive transition patterns: Appearing, Disappearing, Merging, Splitting, Filling, Perforating, Expanding, and Contracting. DynamicPATCH also computes gross changes in both area and number of patches. See more details about our method in our upcoming manuscript: Zhang A, Pontius RG, Bilintoh TM, Sangermano F, Rogan J. DynamicPATCH: Spatially Explicit Dynamic Patch Transition Characterization. Accepted. Landscape Ecology
+Spatially explicit Dynamic PAtch Transition CHaracterization (DynamicPATCH) is a patch-based method that characterizes and quantifies eight types of mutually exclusive and collectively exaustive transition patterns: Appearing, Disappearing, Merging, Splitting, Filling, Perforating, Expanding, and Contracting. DynamicPATCH also computes gross changes in both area and number of patches. See more details about our method in our paper: Zhang, A., Pontius Jr, R. G., Bilintoh, T. M., Sangermano, F., & Rogan, J. (2025). DynamicPATCH: Method and software for spatially explicit dynamic patch transition characterization. Landscape Ecology, 40(7), 132. https://doi.org/10.1007/s10980-025-02120-1
 
 # 1. Installation 
 ----------------------
@@ -49,10 +49,9 @@ main.run_dynamicpatch(
 
 Note: due to an issue with the current version. Please restart the kernel when changing the input dataset and parameters to avoid errors. 
 
-
-## Citation
-Please cite our upcoming publication if you are using DynamicPATCH for your research. 
-
-
 ## Acknowledgement 
 The United States National Science Foundation's Division of Environmental Biology supported this work via grant OCE-2224608 entitled “LTER: Plum Island Ecosystems, the impact of changing landscapes and climate on interconnected coastal ecosystems”. Author A.Z. received funding from the Edna Bailey Sussman Trust via a grant entitled “Methods to characterize changes in salt marshes of estuarine ecosystems in response to sea level rise”.
+
+## Citation
+Zhang, A., Pontius Jr, R. G., Bilintoh, T. M., Sangermano, F., & Rogan, J. (2025). DynamicPATCH: Method and software for spatially explicit dynamic patch transition characterization. Landscape Ecology, 40(7), 132. https://doi.org/10.1007/s10980-025-02120-1
+
