@@ -666,14 +666,14 @@ class Gen_Charts:
                        
         if(option == 'percentage'):
             if(type_ == 'change'):
-                ax.set_ylabel("Annual loss and gain (% out of Union Presence)",fontsize = 20)
+                ax.set_ylabel("Annual loss and gain \n (% out of Union Presence)",fontsize = 20)
             if(type_ == 'compare'):
-                ax.set_ylabel("Loss and gain (% out of Union Presence)",fontsize = 20)
+                ax.set_ylabel("Loss and gain \n (% out of Union Presence)",fontsize = 20)
         if(option == 'area'):
             if(type_ == 'change' and areaunit == 'pixels'):
-                ax.set_ylabel('Annual loss and gain (number of pixels)',fontsize=20)
+                ax.set_ylabel('Annual loss and gain \n (number of pixels)',fontsize=20)
             if(type_ == 'change' and areaunit == 'sqm2'):
-                ax.set_ylabel('Annual loss and gain (Square Meters)',fontsize = 20)
+                ax.set_ylabel('Annual loss and gain \n (Square Meters)',fontsize = 20)
             if(type_ == 'change' and areaunit == 'km2'):
                 ax.set_ylabel('Annual loss and gain (km²)',fontsize = 20)
             if(type_ == 'compare'):

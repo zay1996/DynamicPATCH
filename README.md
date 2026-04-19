@@ -21,6 +21,9 @@ pip install git+https://github.com/zay1996/DynamicPATCH.git@developer-branch
 DynamicPATCH provides two ways to run the analysis: the graphical user interface (GUI) option and the command-line option. For ease of use with no coding requirement, use the GUI option. For more flexibility and greater control of the outputs, use the command-line option. Both options require use of a Python interpreter. 
 
 ## 2.1 Option one: using the built-in interface
+
+(this function is currently under construction)
+
 Open `test-interface.py` from the `tests` folder, run the entire script with a Python interpreter. Enter parameters at the pop-up window:
 
 ![alt text](img/image.png)
