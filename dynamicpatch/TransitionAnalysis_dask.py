@@ -92,10 +92,10 @@ class TransitionAnalysis:
             structure[0,2] = 0
             structure[2,2] = 0
         print(gain.chunks)
-        print("label gain patches")
+        #print("label gain patches")
         gainpatchlabels, _ = ndmeasure.label(gain, structure = structure) 
         #skimage.measure.label(gain,connectivity = 2)
-        print("label loss patches")
+        #print("label loss patches")
         losspatchlabels, _ = ndmeasure.label(loss, structure = structure) 
         perpatchlabels, _ = ndmeasure.label(persmap, structure = structure) 
         prepatchlabelst0, _ = ndmeasure.label(binaryclass[0], structure = structure) 

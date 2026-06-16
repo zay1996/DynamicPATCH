@@ -138,7 +138,7 @@ def run_analysis(params,
                 constrained_layout=True
             )
 
-            print("update?")
+            #print("update?")
             axes = np.array(axes).reshape(-1)
             for i, ax in enumerate(axes):
                 if i < nt-1:

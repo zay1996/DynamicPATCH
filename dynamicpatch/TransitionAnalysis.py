@@ -59,11 +59,11 @@ class TransitionAnalysis:
     def label_patches(self):
         
         _, self.gainpatchlabels = cv2.connectedComponents(self.gain, connectivity=self.connectivity)
-        print("labeled gain")
+        #print("labeled gain")
         _, self.losspatchlabels = cv2.connectedComponents(self.loss, connectivity=self.connectivity)
-        print("labeled loss")
+        #print("labeled loss")
         _, self.perpatchlabels = cv2.connectedComponents(self.persmap, connectivity=self.connectivity)
-        print("labeled pers")
+        #print("labeled pers")
         _, self.prepatchlabelst0 = cv2.connectedComponents(self.binaryclass[0], connectivity=self.connectivity)
         _, self.prepatchlabelst1 = cv2.connectedComponents(self.binaryclass[1], connectivity=self.connectivity)
         _, self.upatch = cv2.connectedComponents((self.datacrosst > 1).astype('uint8'), connectivity=self.connectivity)

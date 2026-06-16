@@ -240,7 +240,6 @@ class Gen_Charts:
         ax.set_xticks(x)
         ax.set_xticklabels(df_types.columns,rotation = 45)
         ax.tick_params(axis='both', labelsize=18)
-        print("try")
         ax.set_ylim(bottom=0)
         if(y_range is not None):
             ax.set_ylim(y_range)
@@ -460,10 +459,10 @@ class Gen_Charts:
                 p.append(ax.bar(df_indey['year'],df_indey.iloc[:,i+1],width=width,bottom=bargheight.iloc[:,i+1], color = colorlist[i], align='edge', label = legendlist[i]))
             ax.set_xlabel('Time Interval',fontsize=20)
             print(xlabels)
-            if(self.nt <= 30):
+            if(self.nt <= 40):
                 ax.set_xticks(np.array(year).astype(int))  # Set the positions of the ticks
                 ax.set_xticklabels(xlabels,rotation = rotation)         # Set the labels for the ticks  
-            elif(self.nt>30):
+            elif(self.nt>40):
                 step = max(1,self.nt//15)
                 tick_positions = np.array(year).astype(int)[::step]
                 tick_labels = np.array(xlabels)[::step]
@@ -640,10 +639,10 @@ class Gen_Charts:
                     p.append(ax.bar(dfbarsize['year'],dfbarsize.iloc[:,i+1],width=width,bottom=dflossbottom.iloc[:,i-int(n/2)], color = colorlist[i], align='edge', label = legendlist[i]))
             ax.set_xlabel('Time Interval',fontsize=20)
 
-            if(self.nt <= 30):
+            if(self.nt <= 40):
                 ax.set_xticks(np.array(year).astype(int))  # Set the positions of the ticks
                 ax.set_xticklabels(xlabels,rotation = rotation)         # Set the labels for the ticks  
-            elif(self.nt>30):
+            elif(self.nt>40):
                 step = max(1,self.nt//15)
 
                 tick_positions = np.array(year).astype(int)[::step]
