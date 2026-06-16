@@ -213,8 +213,10 @@ def run_analysis(params,
         chart_titles.extend([title1,title2,title3,title4])
     
     is_complete = True 
+    #outputs = df_inde_all,df_gainloss_all,df_patch_size,df_patch_num,data,data_val,binary
     outputs = df_inde_all,df_gainloss_all,df_patch_size,df_patch_num,data,data_val,binary
-    result = pattern, pattern_maps, map_title, generated_charts, chart_titles, outputs
+    #result = pattern, pattern_maps, map_title, generated_charts, chart_titles, outputs
+    result = pattern, outputs
     return result
 
 def write_image(pattern,data,FileName):
