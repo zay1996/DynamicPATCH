@@ -185,7 +185,7 @@ def run_analysis(params,
         output_dir = export_map                     
     
         # Create the full path to the file
-        FileName = output_dir + dataset + '.tif'
+        FileName = output_dir + '.tif'
         print(FileName,data,pattern)
         # Call the function with the new FileName
         WriteData.writedata_rasterio(FileName, data,pattern)

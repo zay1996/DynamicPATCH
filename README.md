@@ -154,7 +154,7 @@ The values in each transition pattern map are coded as follows:
 |     6 | Splitting          |
 |     7 | Perforating        |
 |     8 | Contracting        |
-
+|     9 | Stable presence    |
 
 ### `patch_size`
 
