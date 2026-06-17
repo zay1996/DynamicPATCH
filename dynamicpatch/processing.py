@@ -183,12 +183,9 @@ def run_analysis(params,
 
     if export_map is not None:
         output_dir = export_map                     
-        # Ensure the directory ends with a backslash or forward slash
-        if not output_dir.endswith('\\') and not output_dir.endswith('/'):
-            output_dir += '\\'  # Use '\\' for Windows paths, '/' for Unix-like paths
     
         # Create the full path to the file
-        FileName = output_dir + dataset + '_trans_type.tif'
+        FileName = output_dir + dataset + '.tif'
         print(FileName,data,pattern)
         # Call the function with the new FileName
         WriteData.writedata_rasterio(FileName, data,pattern)

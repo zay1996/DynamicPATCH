@@ -23,7 +23,7 @@ def run_dynamicpatch(
         gif_show = False,
         unit = None, # let program decide automatically
         log_scale = True, 
-        export_map = False,
+        export_map = None,
         width = None,
         rotation = 45,
         res = None):
