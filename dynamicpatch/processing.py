@@ -214,7 +214,7 @@ def run_analysis(params,
     
     is_complete = True 
     #outputs = df_inde_all,df_gainloss_all,df_patch_size,df_patch_num,data,data_val,binary
-    outputs = df_inde_all,df_gainloss_all,df_patch_size,df_patch_num,data,data_val,binary
+    outputs = df_inde_all,df_gainloss_all,df_patch_size,df_patch_num
     #result = pattern, pattern_maps, map_title, generated_charts, chart_titles, outputs
     result = pattern, outputs
     return result
