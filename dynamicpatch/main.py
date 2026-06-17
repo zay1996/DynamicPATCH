@@ -66,6 +66,10 @@ def run_dynamicpatch(
         Default is True.
     width: float
         The width of the bars in the two bar charts. Default is 0.35. 
+    rotation: int
+        The rotation angle of year labels in the stacked bar chart. Default is 0.
+    res: int
+        Spatial resolution of the input maps in meters. If not specified, the resolution is read automatically
     '''
     
     

@@ -214,10 +214,16 @@ def run_analysis(params,
     
     is_complete = True 
     #outputs = df_inde_all,df_gainloss_all,df_patch_size,df_patch_num,data,data_val,binary
-    outputs = df_inde_all,df_gainloss_all,df_patch_size,df_patch_num
+    outputs = {
+    "pattern": pattern,
+    "patch_size": df_patch_size,
+    "patch_num": df_patch_num,
+    "gainloss": df_gainloss_all,
+    "increase_decrease": df_inde_all,
+    }
     #result = pattern, pattern_maps, map_title, generated_charts, chart_titles, outputs
-    result = pattern, outputs
-    return result
+    #result = pattern, outputs
+    return outputs
 
 def write_image(pattern,data,FileName):
     from dynamicpatch import WriteData
