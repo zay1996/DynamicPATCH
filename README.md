@@ -34,14 +34,14 @@ package_dir = os.path.dirname(os.path.abspath(dynamicpatch.__file__)) # find dir
 ## specify the parameters 
 workpath = package_dir + '/static/example.xlsx'
 year = [0,1]
-in_nodata = 1
+in_nodata = -1
 targ_pre = 1
 
 dynamicpatch.main.run_dynamicpatch(
-        workpath = package_dir + '/static/example.xlsx',
+        workpath = workpath,
         year = year,
-        targ_pre = 1, # default = 1
-        in_nodata = -1, # default = 0
+        targ_pre = targ_pre, # default = 1
+        in_nodata = in_nodata, # default = 0
         connectivity = 8, # optional, default = 8
         study_area = None, # optional, default = None
         map_show = True, # optional, default = True
