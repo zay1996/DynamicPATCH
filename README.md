@@ -140,6 +140,22 @@ df_inde_all = outputs["increase_decrease"]
 
 A 3-dimensional array containing the transition pattern maps for all time intervals. Each layer represents the spatial transition pattern between two consecutive input maps. For example, if the input maps correspond to `[1938, 1971, 2013]`, the output contains two transition maps: one for 1938–1971 and one for 1971–2013.
 
+The values in each transition pattern map are coded as follows:
+
+| Value | Transition pattern |
+| ----: | ------------------ |
+|    -1 | NoData             |
+|     0 | Stable absence     |
+|     1 | Appearing          |
+|     2 | Merging            |
+|     3 | Filling            |
+|     4 | Expanding          |
+|     5 | Disappearing       |
+|     6 | Splitting          |
+|     7 | Perforating        |
+|     8 | Contracting        |
+
+
 ### `patch_size`
 
 A pandas DataFrame containing patch size information for each transition type and each time interval. 
