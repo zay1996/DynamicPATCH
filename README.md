@@ -6,7 +6,7 @@ Spatially explicit Dynamic PAtch Transition CHaracterization (DynamicPATCH) is a
 # Installation 
 ----------------------
 ### Preparation
-Before installing the package. Make sure you have Python (3.10 and or above) and pip installed. 
+Before installing the package. Make sure you have Python (3.10 recommended) and pip installed. 
 
 
 ### Install DynamicPATCH

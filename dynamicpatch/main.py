@@ -53,8 +53,8 @@ def run_dynamicpatch(
         Whether the result map will be generated. Default is True. 
     chart_show: Boolean
         Whether the result graphics will be generated. Default is True.
-    export_map: Boolean
-        Whether the result map will be exported as a tif file. Default is False.
+    export_map: str
+        The directory of storing the transition maps. Default is None
     unit: String.
         Specifying the area unit for the result graphics. There are three options:
         'pixels','sqm2', and 'km2'. Default is 'Default' and the program will decide the 
@@ -95,5 +95,5 @@ def run_dynamicpatch(
                                      )
 
     
-    return result,params 
+    return result 
         

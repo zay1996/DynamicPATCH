@@ -65,7 +65,7 @@ def run_analysis(params,
                  mapshow = True, 
                  chartsshow = True,
                  unit = None, 
-                 export_map = False,
+                 export_map = None,
                  gif_map = False, 
                  progress = None, 
                  width = None, 
@@ -181,10 +181,8 @@ def run_analysis(params,
         imageio.mimsave('transition_pattern'+study_area+'.gif', frames, fps = 1, loop = 0) 
 
 
-    if export_map is True:                     
-        # Prompt user for output directory
-        output_dir = input("Enter output map directory (please end with / or \\): ").strip()
-        
+    if export_map is not None:
+        output_dir = export_map                     
         # Ensure the directory ends with a backslash or forward slash
         if not output_dir.endswith('\\') and not output_dir.endswith('/'):
             output_dir += '\\'  # Use '\\' for Windows paths, '/' for Unix-like paths
