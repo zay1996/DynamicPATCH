@@ -560,7 +560,7 @@ class Gen_Charts:
         
         return dfbarsize,gainline,lossline
     
-    def gainloss_stackedbars(self, option = 'area',ax = None,legend = 'yes',ax_labels = None,rotation = 0):
+    def gainloss_stackedbars(self, option = 'area',ax = None,legend = 'right',ax_labels = None,rotation = 0,figsize = (12,6)):
         '''
         Plot the annual gains and losses of each transition type 
     
@@ -591,7 +591,7 @@ class Gen_Charts:
         n = len(dfbarsize.columns)-1
         ### PLOT LOSS AND GAIN SIZES ####
         if ax is None:
-            fig, ax = plt.subplots(figsize=(12,6))
+            fig, ax = plt.subplots(figsize=figsize)
             ax_flag = False
         elif ax is not None:
             ax_flag = True
@@ -684,11 +684,34 @@ class Gen_Charts:
         ax.axhline(y=gainline, color = 'black', linewidth = 2, label = 'Gain Line', linestyle = 'dashed')
         ax.axhline(y=lossline, color = 'black', linewidth = 2, label = 'Loss Line', linestyle = 'dashdot')
         #plt.legend((p[0][0], p[1][0],p[2][0],p[3][0]), ('Disappearance','Split','Appearance','Coalescence')) 
-        if(legend == 'yes'):
+        if legend in ('right', 'bottom'):
             handles, labels = ax.get_legend_handles_labels()
-            new_order = [0, 5, 4, 3, 2, 1,6,7,8,9]  # Order to display in legend
-            ax.legend([handles[i] for i in new_order], [labels[i] for i in new_order], ncol=1, bbox_to_anchor=(1, 0.5), frameon = False,loc='center left', fontsize = 18)
-    
+            new_order = [0, 5, 4, 3, 2, 1, 6, 7, 8, 9]
+
+            handles = [handles[i] for i in new_order]
+            labels = [labels[i] for i in new_order]
+
+            if legend == 'right':
+                ax.legend(
+                    handles,
+                    labels,
+                    ncol=1,
+                    bbox_to_anchor=(1, 0.5),
+                    loc='center left',
+                    frameon=False,
+                    fontsize=18
+                )
+
+            elif legend == 'bottom':
+                ax.legend(
+                    handles,
+                    labels,
+                    ncol=int(np.ceil(len(handles) / 2)),
+                    bbox_to_anchor=(0.5, -0.18),
+                    loc='upper center',
+                    frameon=False,
+                    fontsize=18
+                )
         title = 'Annual Gross Loss and Gross Gain by Transition Types'
         
         if ax_flag is False:
