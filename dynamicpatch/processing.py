@@ -71,7 +71,7 @@ def run_analysis(params,
                  width = None, 
                  log_scale = True,
                  rotation = 0,
-                 figsize = (16,9),
+                 figsize = (12,6),
                  legend = 'right'):           
     is_complete = False
 

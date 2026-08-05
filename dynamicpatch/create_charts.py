@@ -703,10 +703,19 @@ class Gen_Charts:
                 )
 
             elif legend == 'bottom':
+                ncol = int(np.ceil(len(handles) / 2))
+
+                # Reorder so the legend reads left-to-right by row
+                bottom_order = [
+                    i
+                    for pair in zip(range(ncol), range(ncol, len(handles)))
+                    for i in pair
+                ]
+
                 ax.legend(
-                    handles,
-                    labels,
-                    ncol=int(np.ceil(len(handles) / 2)),
+                    [handles[i] for i in bottom_order],
+                    [labels[i] for i in bottom_order],
+                    ncol=ncol,
                     bbox_to_anchor=(0.5, -0.18),
                     loc='upper center',
                     frameon=False,
