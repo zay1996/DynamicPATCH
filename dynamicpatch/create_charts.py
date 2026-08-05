@@ -680,7 +680,6 @@ class Gen_Charts:
         #plt.ylim(-2,2)
         ax.axhline(y=0,color='0',linewidth=0.5)
         
-        
         ax.axhline(y=gainline, color = 'black', linewidth = 2, label = 'Gain Line', linestyle = 'dashed')
         ax.axhline(y=lossline, color = 'black', linewidth = 2, label = 'Loss Line', linestyle = 'dashdot')
         #plt.legend((p[0][0], p[1][0],p[2][0],p[3][0]), ('Disappearance','Split','Appearance','Coalescence')) 
@@ -728,4 +727,5 @@ class Gen_Charts:
             fig.tight_layout()
             return fig,title,dfbarsize
         else:
+            fig.tight_layout()
             return ax,dfbarsize

@@ -28,7 +28,7 @@ def run_dynamicpatch(
         rotation = 45,
         res = None,
         legend = 'right',
-        figsize = (16,9)):
+        figsize = (12,6)):
     '''
     Run dynamic patch analysis in commandline 
     
