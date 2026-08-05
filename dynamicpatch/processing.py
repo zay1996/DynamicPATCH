@@ -70,7 +70,9 @@ def run_analysis(params,
                  progress = None, 
                  width = None, 
                  log_scale = True,
-                 rotation = 0):           
+                 rotation = 0,
+                 figsize = (16,9),
+                 legend = 'right'):           
     is_complete = False
 
     workpath, year, connectivity, targ_pre, in_nodata, FileType, dataset,study_area = \
@@ -201,7 +203,7 @@ def run_analysis(params,
         df_patch_size,fig1,title1 = show_charts.plot_ave_size(width = width, log_scale = log_scale)
         df_patch_num,fig2,title2 = show_charts.plot_num(width = width)
         
-        fig3, title3,df_gainloss_all = show_charts.gainloss_stackedbars(rotation = rotation)
+        fig3, title3,df_gainloss_all = show_charts.gainloss_stackedbars(rotation = rotation,legend = legend, figsize = figsize)
         fig4, title4 = show_charts.inde_stackedbars(df_inde_all,rotation = rotation)
         
         generated_charts.extend([fig1, fig2, fig3, fig4])

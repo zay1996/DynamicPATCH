@@ -26,7 +26,9 @@ def run_dynamicpatch(
         export_map = None,
         width = None,
         rotation = 45,
-        res = None):
+        res = None,
+        legend = 'right',
+        figsize = (16,9)):
     '''
     Run dynamic patch analysis in commandline 
     
@@ -91,7 +93,9 @@ def run_dynamicpatch(
                                      gif_map = gif_show,
                                      width = width, 
                                      log_scale = log_scale,
-                                     rotation = rotation
+                                     rotation = rotation,
+                                     legend = legend, 
+                                     figsize = figsize
                                      )
 
     
