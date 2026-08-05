@@ -650,7 +650,7 @@ class Gen_Charts:
                 ax.set_xticks(tick_positions)
                 ax.set_xticklabels(tick_labels,rotation = rotation)         # Set the labels for the ticks  
 
-            ax.tick_params(axis='both', which='major', labelsize=18)
+            ax.tick_params(axis='both', which='major', labelsize=16)
             ax.tick_params(axis='x', labelsize=xlabel_size)
 
         if(type_ == 'compare'):
@@ -665,18 +665,18 @@ class Gen_Charts:
                        
         if(option == 'percentage'):
             if(type_ == 'change'):
-                ax.set_ylabel("Annual loss and gain \n (% out of Union Presence)",fontsize = 20)
+                ax.set_ylabel("Annual loss and gain \n (% out of Union Presence)",fontsize = 16)
             if(type_ == 'compare'):
-                ax.set_ylabel("Loss and gain \n (% out of Union Presence)",fontsize = 20)
+                ax.set_ylabel("Loss and gain \n (% out of Union Presence)",fontsize = 16)
         if(option == 'area'):
             if(type_ == 'change' and areaunit == 'pixels'):
-                ax.set_ylabel('Annual loss and gain \n (number of pixels)',fontsize=20)
+                ax.set_ylabel('Annual loss and gain \n (number of pixels)',fontsize=16)
             if(type_ == 'change' and areaunit == 'sqm2'):
-                ax.set_ylabel('Annual loss and gain \n (Square Meters)',fontsize = 20)
+                ax.set_ylabel('Annual loss and gain \n (Square Meters)',fontsize = 16)
             if(type_ == 'change' and areaunit == 'km2'):
-                ax.set_ylabel('Annual loss and gain (km²)',fontsize = 20)
+                ax.set_ylabel('Annual loss and gain (km²)',fontsize = 16)
             if(type_ == 'compare'):
-                ax.set_ylabel("Loss and gain (number of pixels)",fontsize = 20)
+                ax.set_ylabel("Loss and gain (number of pixels)",fontsize = 16)
         #plt.ylim(-2,2)
         ax.axhline(y=0,color='0',linewidth=0.5)
         
