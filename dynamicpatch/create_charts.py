@@ -727,5 +727,5 @@ class Gen_Charts:
             fig.tight_layout()
             return fig,title,dfbarsize
         else:
-            fig.tight_layout()
+            #fig.tight_layout()
             return ax,dfbarsize
