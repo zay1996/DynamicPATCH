@@ -134,7 +134,7 @@ class Gen_Charts:
                 
                 if(areaunit == 'pixels'):
                     size_list = size_list
-                    size_patch.append(np.sum(tax_map))
+                    size_patch.append(int(np.sum(tax_map)))
                 if(areaunit == 'sqm2'):
                     size_list = size_list * (res**2)
                     size_patch.append(np.sum(tax_map)* (res**2))
